@@ -1,0 +1,1354 @@
+points(t$nondup,t$dup,pch=19,cex=0.3,col='red')
+parse.files = function(files) {#
+	sp.names = strsplit(files, split='-')#
+	group = factor(unlist(lapply(sp.names, function(x) x[2])))#
+	counts = data.frame(roi = read.delim(files[1], header=F)$V1) #get ROI names#
+	for (g in levels(group)) {#
+		g.files = files[group==g]#
+		g.count = numeric(nrow(counts))#
+		for (f in g.files) g.count = g.count + read.delim(f, header=F)$V2#
+		counts = cbind(counts, g.count)#
+	}#
+	colnames(counts)[-1] = gsub('\\.txt','',levels(group))#
+	counts = counts[!grepl('^__',counts$roi),] #remove extra lines from htseq-count#
+	return(counts)#
+}#
+#
+input = parse.files(list.files('./counts', pattern='^ESC', full.names=T))#
+ip = parse.files(list.files('./counts', pattern='^mES_HiChIP_H3K27ac', full.names=T))#
+##get distances between original and duplicated ROIs#
+#
+gtf = read.delim('original_ROIs.gtf', header=F, as.is=T)#
+attrib = strsplit(gtf$V9, split='[; ]')#
+gtf.id = unlist(lapply(attrib, function(x) x[5]))#
+gtf.dist = unlist(lapply(attrib, function(x) x[2]))#
+#
+dist = as.numeric(gtf.dist[match(ip$roi, gtf.id)])/1000
+enrichment = function(prefix, include=c('unique','R','P'), pseudo=1) {#
+	ori.ip = dup.ip = numeric(nrow(ip))#
+	ori.input = dup.input = numeric(nrow(input))#
+	if ('unique' %in% include) {#
+		ori.ip = ori.ip + ip[,colnames(ip)=='unique_oriCounts']#
+		dup.ip = dup.ip + ip[,colnames(ip)=='unique_dupCounts']#
+		ori.input = ori.input + input[,colnames(input)=='unique_oriCounts']#
+		dup.input = dup.input + input[,colnames(input)=='unique_dupCounts']#
+	}#
+	if ('R' %in% include) {#
+		ori.ip = ori.ip + ip[,colnames(ip)==paste(prefix,'R_oriCounts',sep='')]#
+		dup.ip = dup.ip + ip[,colnames(ip)==paste(prefix,'R_dupCounts',sep='')]#
+		ori.input = ori.input + input[,colnames(input)==paste(prefix,'R_oriCounts',sep='')]#
+		dup.input = dup.input + input[,colnames(input)==paste(prefix,'R_dupCounts',sep='')]#
+	}#
+	if ('P' %in% include) {#
+		ori.ip = ori.ip + ip[,colnames(ip)==paste(prefix,'P_oriCounts',sep='')]#
+		dup.ip = dup.ip + ip[,colnames(ip)==paste(prefix,'P_dupCounts',sep='')]#
+		ori.input = ori.input + input[,colnames(input)==paste(prefix,'P_oriCounts',sep='')]#
+		dup.input = dup.input + input[,colnames(input)==paste(prefix,'P_dupCounts',sep='')]#
+	}#
+	ori = log2(ori.ip+pseudo) - log2(ori.input+pseudo)#
+	dup = log2(dup.ip+pseudo) - log2(dup.input+pseudo)#
+	nondup = log2(ip$nondup_counts+pseudo) - log2(input$nondup_counts+pseudo)#
+	out = data.frame(roi=ip$roi, ori, dup, nondup, dist)#
+	return(out)#
+}#
+#
+t=enrichment('20kb',pseudo=5)#
+plot(t$nondup,t$ori,pch=19,cex=0.5)#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('20kb',pseudo=10)#
+plot(t$nondup,t$ori,pch=19,cex=0.5)#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('20kb',pseudo=20)#
+plot(t$nondup,t$ori,pch=19,cex=0.5)#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('20kb',pseudo=50)#
+plot(t$nondup,t$ori,pch=19,cex=0.5)#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('20kb',pseudo=100)#
+plot(t$nondup,t$ori,pch=19,cex=0.5)#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('20kb',pseudo=200)#
+plot(t$nondup,t$ori,pch=19,cex=0.5)#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(0,3),ylim=c(0,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(-0.5,3),ylim=c(-0.5,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+head(ip)
+tail(ip)
+plot(ip$10kbR_oriCounts,ip$10kbP_oriCounts)
+plot(ip[,5],ip[,3])
+head(input)
+enrichment = function(prefix, include=c('unique','R','P')) {#
+	ori.ip = dup.ip = numeric(nrow(ip))#
+	ori.input = dup.input = numeric(nrow(input))#
+	if ('unique' %in% include) {#
+		ori.ip = ori.ip + ip[,colnames(ip)=='unique_oriCounts']#
+		dup.ip = dup.ip + ip[,colnames(ip)=='unique_dupCounts']#
+		ori.input = ori.input + input[,colnames(input)=='unique_oriCounts']#
+		dup.input = dup.input + input[,colnames(input)=='unique_dupCounts']#
+	}#
+	if ('R' %in% include) {#
+		ori.ip = ori.ip + ip[,colnames(ip)==paste(prefix,'R_oriCounts',sep='')]#
+		dup.ip = dup.ip + ip[,colnames(ip)==paste(prefix,'R_dupCounts',sep='')]#
+		ori.input = ori.input + input[,colnames(input)==paste(prefix,'R_oriCounts',sep='')]#
+		dup.input = dup.input + input[,colnames(input)==paste(prefix,'R_dupCounts',sep='')]#
+	}#
+	if ('P' %in% include) {#
+		ori.ip = ori.ip + ip[,colnames(ip)==paste(prefix,'P_oriCounts',sep='')]#
+		dup.ip = dup.ip + ip[,colnames(ip)==paste(prefix,'P_dupCounts',sep='')]#
+		ori.input = ori.input + input[,colnames(input)==paste(prefix,'P_oriCounts',sep='')]#
+		dup.input = dup.input + input[,colnames(input)==paste(prefix,'P_dupCounts',sep='')]#
+	}#
+	#we add to the original location misassigned reads that would come from the nearby repeat#
+	ori = log2(ori.ip+dup.input+1) - log2(ori.input+dup.input+1)#
+	#we add to the duplicated location reads that would normally belong there#
+	dup = log2(dup.ip+ori.input+1) - log2(dup.input+ori.input+1)#
+	#ori = log2(ori.ip+1) - log2(ori.input+1)#
+	#dup = log2(dup.ip+1) - log2(dup.input+1)#
+	nondup = log2(ip$nondup_counts+1) - log2(input$nondup_counts+1)#
+	out = data.frame(roi=ip$roi, ori, dup, nondup, dist)#
+	return(out)#
+}#
+#
+t=enrichment('20kb')#
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(-0.5,3),ylim=c(-0.5,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+class(ip)
+prefix
+prefix='20kb'
+grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))
+grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))
+ori.cols = grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))
+dup.cols = grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))
+enrichment = function(prefix) {	#
+	ori.cols = grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))#
+	dup.cols = grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))#
+	ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region#
+	ori.input = input$unique_oriCounts +#
+		rowSums(input[,ori.cols) +#
+		rowSums(input[,dup.cols])#
+	dup.ip = ip$unique_dupCounts +  #unique counts#
+		rowSums(ip[,dup.cols) +  #RP counts#
+		rowSums(input[,ori.cols])  #correct reads that would've come from duplicated region#
+	dup.input = input$unique_dupCounts +#
+		rowSums(input[,dup.cols) +#
+		rowSums(input[,ori.cols])	#
+	out = data.frame(roi = ip$roi,#
+		ori = log2(ori.ip+1) - log2(ori.input+2),#
+		dup = log2(dup.ip+1) - log2(dup.input+2),#
+		nondup = log2(ip$nondup_counts+1) - log2(input$nondup_counts+1),#
+		dist)#
+	return(out)#
+}#
+#
+t=enrichment('20kb')#
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(-0.5,3),ylim=c(-0.5,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+a = 1 + 2 +#
+	3 + 1
+ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region
+ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols]) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region
+ori.cols = grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))#
+	dup.cols = grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))#
+	ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols]) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region#
+	ori.input = input$unique_oriCounts +#
+		rowSums(input[,ori.cols]) +#
+		rowSums(input[,dup.cols])#
+	dup.ip = ip$unique_dupCounts +  #unique counts#
+		rowSums(ip[,dup.cols]) +  #RP counts#
+		rowSums(input[,ori.cols])  #correct reads that would've come from duplicated region#
+	dup.input = input$unique_dupCounts +#
+		rowSums(input[,dup.cols]) +#
+		rowSums(input[,ori.cols])
+parse.files = function(files) {#
+	sp.names = strsplit(files, split='-')#
+	group = factor(unlist(lapply(sp.names, function(x) x[2])))#
+	counts = data.frame(roi = read.delim(files[1], header=F)$V1) #get ROI names#
+	for (g in levels(group)) {#
+		g.files = files[group==g]#
+		g.count = numeric(nrow(counts))#
+		for (f in g.files) g.count = g.count + read.delim(f, header=F)$V2#
+		counts = cbind(counts, g.count)#
+	}#
+	colnames(counts)[-1] = gsub('\\.txt','',levels(group))#
+	counts = counts[!grepl('^__',counts$roi),] #remove extra lines from htseq-count#
+	return(counts)#
+}#
+#
+input = parse.files(list.files('./counts', pattern='^ESC', full.names=T))#
+ip = parse.files(list.files('./counts', pattern='^mES_HiChIP_H3K27ac', full.names=T))#
+##get distances between original and duplicated ROIs#
+#
+gtf = read.delim('original_ROIs.gtf', header=F, as.is=T)#
+attrib = strsplit(gtf$V9, split='[; ]')#
+gtf.id = unlist(lapply(attrib, function(x) x[5]))#
+gtf.dist = unlist(lapply(attrib, function(x) x[2]))#
+#
+dist = as.numeric(gtf.dist[match(ip$roi, gtf.id)])/1000#
+##calculate enrichment#
+#
+enrichment = function(prefix) {	#
+	ori.cols = grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))#
+	dup.cols = grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))#
+	ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols]) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region#
+	ori.input = input$unique_oriCounts +#
+		rowSums(input[,ori.cols]) +#
+		rowSums(input[,dup.cols])#
+	dup.ip = ip$unique_dupCounts +  #unique counts#
+		rowSums(ip[,dup.cols]) +  #RP counts#
+		rowSums(input[,ori.cols])  #correct reads that would've come from duplicated region#
+	dup.input = input$unique_dupCounts +#
+		rowSums(input[,dup.cols]) +#
+		rowSums(input[,ori.cols])	#
+	out = data.frame(roi = ip$roi,#
+		ori = log2(ori.ip+1) - log2(ori.input+2),#
+		dup = log2(dup.ip+1) - log2(dup.input+2),#
+		nondup = log2(ip$nondup_counts+1) - log2(input$nondup_counts+1),#
+		dist)#
+	return(out)#
+}#
+#
+t=enrichment('20kb')#
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(-0.5,3),ylim=c(-0.5,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(-0.5,3),ylim=c(-0.5,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('10kb')#
+plot(t$nondup,t$ori,pch=19,cex=0.5,xlim=c(-0.5,3),ylim=c(-0.5,3))#
+points(t$nondup,t$dup,pch=19,cex=0.5,col='red')
+t=enrichment('10kb')
+head(t)
+t=enrichment('20kb')
+head(t)
+library(tidyverse)
+enr20 = enrichment('20kb')
+ggplot(enr20, aes(nondup,ori)) +#
+	theme_classic() +#
+	geom_point()
+quartz(w=4, h=4)#
+ggplot(enr20, aes(nondup,ori)) +#
+	theme_classic() +#
+	geom_point()
+ggplot(enr20) +#
+	theme_classic() +#
+	geom_point(aes(nondup,ori)) + #
+	geom_point(aes(nondup,dup), color='red')
+ggplot(enr20) +#
+	theme_classic() +#
+	geom_point(aes(nondup,ori), size=0.5) + #
+	geom_point(aes(nondup,dup), colour='red', size=0.5)
+enr20 %>% filter(dist>=20) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,ori), size=0.5) + #
+	geom_point(aes(nondup,dup), colour='red', size=0.5)
+enr20 %>% filter(dist>=20) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,ori)) + #
+	geom_point(aes(nondup,dup), colour='red')
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,ori)) + #
+	geom_point(aes(nondup,dup), colour='red')
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,ori), size=0.5) + #
+	geom_point(aes(nondup,dup), colour='red', size=0.5)
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.5) +#
+	geom_point(aes(nondup,ori), size=0.5)
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.5) +#
+	geom_point(aes(nondup,ori), size=0.5)
+enr20 %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup)) +#
+	theme_classic() +#
+	geom_hex() +
+xlab('')
+?geom_smooth
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.5) +#
+	geom_smooth(aes(nodup,dup), method=lm)#
+	geom_point(aes(nondup,ori), size=0.5)
+quartz(w=4, h=4)#
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.5) +#
+	geom_smooth(aes(nondup,dup), method=lm)#
+	geom_point(aes(nondup,ori), size=0.5)
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.5) +#
+	geom_smooth(aes(nondup,dup), method=lm) +#
+	geom_point(aes(nondup,ori), size=0.5) +#
+	geom_smooth(aes(nondup,ori), method=lm)
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.5) +#
+	geom_smooth(aes(nondup,dup)) +#
+	geom_point(aes(nondup,ori), size=0.5) +#
+	geom_smooth(aes(nondup,ori))
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.8) +#
+	geom_smooth(aes(nondup,dup), method=lm) +#
+	geom_point(aes(nondup,ori), size=0.8) +#
+	geom_smooth(aes(nondup,ori), method=lm)
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.8) +#
+	#geom_smooth(aes(nondup,dup), method=lm) +#
+	geom_point(aes(nondup,ori), size=0.8) +#
+	#geom_smooth(aes(nondup,ori), method=lm)
+xlab('')
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.8) +#
+	#geom_smooth(aes(nondup,dup), method=lm) +#
+	geom_point(aes(nondup,ori), size=0.8) +#
+	#geom_smooth(aes(nondup,ori), method=lm)#
+	geom_density_2d(aes(nondup,ori))
+enr20 %>% filter(dist>=10) %>%#
+ggplot() +#
+	theme_classic() +#
+	geom_point(aes(nondup,dup), colour='red', size=0.8) +#
+	#geom_smooth(aes(nondup,dup), method=lm) +#
+	geom_point(aes(nondup,ori), size=0.8) +#
+	#geom_smooth(aes(nondup,ori), method=lm)#
+	stat_ellipse(aes(nondup,ori))
+head(enr20)
+enr20t = tibble(roi = rep(enr20$roi,2),#
+	type = rep(c('ori','dup'), each=nrow(enr20)),#
+	dup = c(enr20$ori, enr20$dup),#
+	nondup = rep(enr20$nondup,2),#
+	dist = rep(enr20$dist,2))
+enr20t
+quartz(w=4, h=4)#
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup), colour=type) +#
+	theme_classic() +#
+	geom_point() +#
+	geom_smooth(method=lm)
+quartz(w=4, h=4)#
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point() +#
+	geom_smooth(method=lm)
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+enr20t %>% filter(dist>=15) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+quartz(w=4, h=4)#
+enr20t %>% filter(nondup>=1) %>%#
+ggplot(aes(dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot()
+quartz(w=4, h=4)#
+enr20t %>% filter(nondup>=1) %>%#
+ggplot(aes(type,dup)) +#
+	theme_classic() +#
+	geom_boxplot()
+enr20t %>% filter(nondup>=1) %>%#
+ggplot(aes(dist,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot()
+quartz(w=4, h=4)#
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot()
+143.5/110.3
+head(input)
+input[,-1] = input[,-1]/1.3  #normalise by total read count
+head(input)
+enr20 = enrichment('20kb')#
+enr20t = tibble(roi = rep(enr20$roi,2),#
+	type = rep(c('ori','dup'), each=nrow(enr20)),#
+	dup = c(enr20$ori, enr20$dup),#
+	nondup = rep(enr20$nondup,2),#
+	dist = rep(enr20$dist,2))
+quartz(w=4, h=4)#
+enr20t %>% filter(dist>=15) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+quartz(w=4, h=4)#
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot()
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA)
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1.5) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA)
+quartz(w=4, h=4)#
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA)
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA) +#
+	ylim(-0.5,2.5)
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA) +#
+	ylim(-0.2,2.5)
+enrichment = function(prefix) {	#
+	ori.cols = grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))#
+	dup.cols = grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))#
+	ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols]) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region#
+	ori.input = input$unique_oriCounts +#
+		rowSums(input[,ori.cols]) +#
+		rowSums(input[,dup.cols])#
+	dup.ip = ip$unique_dupCounts +  #unique counts#
+		rowSums(ip[,dup.cols]) +  #RP counts#
+		rowSums(input[,ori.cols])  #correct reads that would've come from duplicated region#
+	dup.input = input$unique_dupCounts +#
+		rowSums(input[,dup.cols]) +#
+		rowSums(input[,ori.cols])	#
+	out = data.frame(roi = ip$roi,#
+		ori = log2(ori.ip+1) - log2(ori.input+1),#
+		dup = log2(dup.ip+1) - log2(dup.input+1),#
+		nondup = log2(ip$nondup_counts+1) - log2(input$nondup_counts+1),#
+		dist)#
+	return(out)#
+}
+enr20 = enrichment('20kb')#
+enr20t = tibble(roi = rep(enr20$roi,2),#
+	type = rep(c('ori','dup'), each=nrow(enr20)),#
+	dup = c(enr20$ori, enr20$dup),#
+	nondup = rep(enr20$nondup,2),#
+	dist = rep(enr20$dist,2))#
+##plots#
+#
+quartz(w=4, h=4)#
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+ggsave('~/Downloads/scatter.png')
+quartz(w=4, h=4)#
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA) +#
+	ylim(-0.2,2.5)
+ggsave('~/Downloads/box.png')
+?cut
+data %>% mutate(dfac = cut(c(0,15000,50000)))#
+	%>% group_by(cutoff, dfac) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+library(tidyverse)
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer())#
+#
+for (t in 1:10) {#
+	sub = read_tsv(paste('roi_peaks/nondup_over_',t,'.txt', sep=''), col_names=FALSE) %>%#
+		select('X9','X10') %>%#
+		add_column(read_tsv(paste('roi_peaks/ori_over_',t,'.txt', sep=''), col_names=FALSE)$X10) %>%#
+		add_column(read_tsv(paste('roi_peaks/dup_over_',t,'.txt', sep=''), col_names=FALSE)$X10)#
+	sub = add_column(sub, rep(t,nrow(sub)))#
+	colnames(sub) = colnames(data)#
+	data = rbind(data, sub)#
+}#
+#
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))
+roc.data = data %>% mutate(dfac = cut(c(0,15000,50000)))#
+	%>% group_by(cutoff, dfac) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000)))#
+	%>% group_by(cutoff, dfac) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+data
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+roc.data
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point()
+quartz(w=4, h=4)#
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point()
+quartz(w=6, h=4)#
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point()
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	geom_line()
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point()
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	geom_smooth()
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point()
+?labels
+quartz(w=6, h=4)#
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_fill_discrete(name='d', labels=c('≤15kb','>15kb'))
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='d', labels=c('≤15kb','>15kb'))
+quartz(w=5, h=4)#
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='d', labels=c('≤15kb','>15kb'))
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='inter-repeat dist', labels=c('≤15kb','>15kb'))
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='Gap', labels=c('≤15kb','>15kb'))
+ggsave('~/Downloads/temp.png')
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer())
+for (t in 1:10) {#
+	sub = read_tsv(paste('roi_peaks/patcher_intersection_',t,'.txt', sep=''), col_names=FALSE)#
+	sub = add_column(sub, rep(t,nrow(sub)))#
+	colnames(sub) = colnames(data)#
+	data = rbind(data, sub)#
+}
+data
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))#
+##make ROCs separated by inter-repeat distance#
+#
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)#
+#
+quartz(w=5, h=4)#
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='Gap', labels=c('≤15kb','>15kb'))
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer())#
+#
+for (t in 1:10) {#
+	sub = read_tsv(paste('roi_peaks/unique_intersection_',t,'.txt', sep=''), col_names=FALSE)#
+	sub = add_column(sub, rep(t,nrow(sub)))#
+	colnames(sub) = colnames(data)#
+	data = rbind(data, sub)#
+}#
+#
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))#
+##make ROCs separated by inter-repeat distance#
+#
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)#
+#
+quartz(w=5, h=4)#
+roc.data %>% ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='Gap', labels=c('≤15kb','>15kb'))
+dta
+data
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer(), type=character())#
+#
+for (t in 1:10) {#
+	all = read_tsv(paste('roi_peaks/patcher_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	all = add_column(all, cutoff=rep(t,nrow(all)), type=rep('all',nrow(all)))#
+	uni = read_tsv(paste('roi_peaks/unique_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	uni = add_column(uni, cutoff=rep(t,nrow(uni)), type=rep('uni',nrow(uni)))#
+	data = rbind(data, all, uni)#
+}
+data
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac, type) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+roc.data
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='Gap', labels=c('≤15kb','>15kb'))
+roc.data %>% filter(type=='uni') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(name='Gap', labels=c('≤15kb','>15kb'))
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red')) +#
+	scale_colour_discrete(name='Gap', labels=c('≤15kb','>15kb'))
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'))
+?scale_colour_discrete
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_discrete(c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='uni') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_classic() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+roc.data %>% filter(type=='uni') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))
+roc.data %>% filter(type=='uni') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+ggsave('~/Downloads/temp.png')
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='uni') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))
+ggsave('~/Downloads/temp2.png')
+library(tidyverse)#
+##read intersections between ROIs and peaks#
+#
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer(), type=character())#
+#
+for (t in 1:10) {#
+	all = read_tsv(paste('roi_peaks/patcher_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	all = add_column(all, cutoff=rep(t,nrow(all)), type=rep('all',nrow(all)))#
+	uni = read_tsv(paste('roi_peaks/unique_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	uni = add_column(uni, cutoff=rep(t,nrow(uni)), type=rep('uni',nrow(uni)))#
+	data = rbind(data, all, uni)#
+}#
+#
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))#
+##make ROCs separated by inter-repeat distance#
+#
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac, type) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)#
+#
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+c6 = roc.data %>% filter(cutoff==6)
+c6
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity')
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge())
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge()) +#
+	scale_fill_manual(values=c('orange','grey'))
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey'))
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	ylim(0,80)
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,fdr,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	ylim(0,80)
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80)
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('True positive rate')
+ggsave('~/Downloads/tpr.png')
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,fdr,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('False positive rate')
+ggsave('~/Downloads/fdr.png')
+library(tidyverse)#
+##read intersections between ROIs and peaks#
+#
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer(), type=character())#
+#
+for (t in 1:10) {#
+	all = read_tsv(paste('roi_peaks/patcher_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	all = add_column(all, cutoff=rep(t,nrow(all)), type=rep('all',nrow(all)))#
+	uni = read_tsv(paste('roi_peaks/unique_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	uni = add_column(uni, cutoff=rep(t,nrow(uni)), type=rep('uni',nrow(uni)))#
+	data = rbind(data, all, uni)#
+}#
+#
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac, type) %>%
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('True positive rate')
+data
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac, type) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('True positive rate')
+t=roc.data %>% filter(cutoff==6)
+t
+roc.data
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+roc.data %>% group_by(dfac, type) %>%#
+	summarise(auc = function(recov, fdr) fdr+recov)
+print(roc.data,n=40)
+roc = roc.data %>% filter(dfac=='(1.5e+04,5e+04]', type='all')
+roc = roc.data %>% filter(dfac=='(1.5e+04,5e+04]', type=='all')
+roc
+fpr = c(roc$fdr, 0)
+fpr
+tpr = c(roc$recov, 0)
+tpr
+fpr.diff = fpr[1:(length(fpr)-1)] - fpr[2:length(fpr)]
+fpr.diff
+tpr.mean = (tpr[1:(length(tpr)-1)] + tpr[2:length(tpr)])/2
+tpr.mean
+total.area = sum(fpr.diff*tpr.mean)
+total.area
+100*length(fpr.diff)
+total.area/10000
+auc = function(roc) {#
+	fpr = c(roc$fdr, 0)#
+	tpr = c(roc$recov, 0)#
+	fpr.diff = fpr[1:(length(fpr)-1)] - fpr[2:length(fpr)]#
+	tpr.mean = (tpr[1:(length(tpr)-1)] + tpr[2:length(tpr)])/2#
+	total.area = sum(fpr.diff*tpr.mean)#
+	return(total.area/10000)#
+}
+roc.data %>% filter(dfac=='(1.5e+04,5e+04]', type=='all') %>% auc()
+roc.data %>% filter(dfac=='(0,1.5e+04]', type=='all') %>% auc()
+roc.data %>% filter(dfac=='(0,1.5e+04]', type=='uni') %>% auc()
+roc.data %>% filter(dfac=='(1.5e+04,5e+04]', type=='uni') %>% auc()
+dataset = 'Bonev'#
+#
+if (dataset=='Bonev') files = list.files('./counts', pattern='^ESC', full.names=T)#
+if (dataset=='Mumbach') files = list.files('./counts', pattern='^mES_HiChIP_H3K27ac', full.names=T)#
+#
+sp.names = strsplit(files, split='-')#
+group = factor(unlist(lapply(sp.names, function(x) x[2])))#
+#
+counts = data.frame(roi = read.delim(files[1], header=F)$V1) #get ROI names#
+for (g in levels(group)) {#
+	g.files = files[group==g]#
+	g.count = numeric(nrow(counts))#
+	for (f in g.files) g.count = g.count + read.delim(f, header=F)$V2#
+	counts = cbind(counts, g.count)#
+}#
+colnames(counts)[-1] = gsub('\\.txt','',levels(group))#
+counts = counts[!grepl('^__',counts$roi),] #remove extra lines from htseq-count#
+##get distances between original and duplicated ROIs#
+#
+gtf = read.delim('original_ROIs.gtf', header=F, as.is=T)#
+attrib = strsplit(gtf$V9, split='[; ]')#
+gtf.id = unlist(lapply(attrib, function(x) x[5]))#
+gtf.dist = unlist(lapply(attrib, function(x) x[2]))#
+#
+dist = as.numeric(gtf.dist[match(counts$roi, gtf.id)])/1000#
+##normalised counts per distance#
+#
+norm.counts = function(prefix, include=c('unique','R','P')) {#
+	ori = dup = numeric(nrow(counts))#
+	if ('unique' %in% include) {#
+		ori = ori+counts[,colnames(counts)=='unique_oriCounts']#
+		dup = dup+counts[,colnames(counts)=='unique_dupCounts']#
+	}#
+	if ('R' %in% include) {#
+		ori = ori+counts[,colnames(counts)==paste(prefix,'R_oriCounts',sep='')]#
+		dup = dup+counts[,colnames(counts)==paste(prefix,'R_dupCounts',sep='')]#
+	}#
+	if ('P' %in% include) {#
+		ori = ori+counts[,colnames(counts)==paste(prefix,'P_oriCounts',sep='')]#
+		dup = dup+counts[,colnames(counts)==paste(prefix,'P_dupCounts',sep='')]#
+	}#
+	ori = ori/counts$nondup_counts*100#
+	dup = dup/counts$nondup_counts*100#
+	out = data.frame(roi=counts$roi, ori, dup, dist)#
+	return(out)#
+}
+library(svglite)
+library(tidyverse)
+sel.dist = c(5, 10, 20, 30, 50)#
+#
+uni = norm.counts('20kb', include='unique') %>% filter(dist %in% sel.dist)#
+all = norm.counts('20kb') %>% filter(dist %in% sel.dist)#
+pdata = rbind(uni, all) %>%#
+	add_column(type = factor(rep(c('uni','all'),each=nrow(uni)),levels=c('uni','all'))) %>%#
+	mutate(acc = ori/(dup+ori)*100)
+sdata = pdata %>% group_by(dist,type) %>%#
+	summarise(mrec=mean(ori), sdrec=sd(ori), macc=mean(acc, na.rm=T), sdacc=sd(acc, na.rm=T))
+quartz(w=4,h=3)#
+sdata %>% ggplot(aes(factor(dist), mrec, fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+ggsave('~/Downloads/temp.svg')
+quartz(w=4,h=3)#
+sdata %>% ggplot(aes(factor(dist), macc, fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=macc, ymax=macc+sdacc), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('Accuracy (%)') +#
+	labs(fill='')
+ggsave('~/Downloads/temp.svg')
+2.1/3
+library(tidyverse)
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer(), type=character())#
+#
+for (t in 1:10) {#
+	all = read_tsv(paste('roi_peaks/patcher_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	all = add_column(all, cutoff=rep(t,nrow(all)), type=rep('all',nrow(all)))#
+	uni = read_tsv(paste('roi_peaks/unique_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	uni = add_column(uni, cutoff=rep(t,nrow(uni)), type=rep('uni',nrow(uni)))#
+	data = rbind(data, all, uni)#
+}#
+#
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))
+library(svglite)
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac, type) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)#
+#
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))
+ggsave('~/Downloads/temp.scg')
+ggsave('~/Downloads/temp.svg')
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='uni') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))
+ggsave('~/Downloads/temp.svg')
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('True positive rate')
+ggsave('~/Downloads/temp.svg')
+quartz(h=4,w=3)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,fdr,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('False positive rate')
+ggsave('~/Downloads/temp.svg')
+quartz(h=3.5,w=2.8)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,recov,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('True positive rate')
+ggsave('~/Downloads/temp.svg')
+quartz(h=3.5,w=2.8)#
+roc.data %>% filter(cutoff==6) %>%#
+	ggplot(aes(dfac,fdr,fill=type)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black') +#
+	scale_fill_manual(values=c('orange','grey')) +#
+	scale_x_discrete(labels=c('≤15kb','15kb')) +#
+	ylim(0,80) +#
+	ylab('False positive rate')
+ggsave('~/Downloads/temp.svg')
+parse.files = function(files) {#
+	sp.names = strsplit(files, split='-')#
+	group = factor(unlist(lapply(sp.names, function(x) x[2])))#
+	counts = data.frame(roi = read.delim(files[1], header=F)$V1) #get ROI names#
+	for (g in levels(group)) {#
+		g.files = files[group==g]#
+		g.count = numeric(nrow(counts))#
+		for (f in g.files) g.count = g.count + read.delim(f, header=F)$V2#
+		counts = cbind(counts, g.count)#
+	}#
+	colnames(counts)[-1] = gsub('\\.txt','',levels(group))#
+	counts = counts[!grepl('^__',counts$roi),] #remove extra lines from htseq-count#
+	return(counts)#
+}#
+#
+input = parse.files(list.files('./counts', pattern='^ESC', full.names=T))#
+input[,-1] = input[,-1]/1.3  #normalise by total read count#
+ip = parse.files(list.files('./counts', pattern='^mES_HiChIP_H3K27ac', full.names=T))#
+##get distances between original and duplicated ROIs#
+#
+gtf = read.delim('original_ROIs.gtf', header=F, as.is=T)#
+attrib = strsplit(gtf$V9, split='[; ]')#
+gtf.id = unlist(lapply(attrib, function(x) x[5]))#
+gtf.dist = unlist(lapply(attrib, function(x) x[2]))#
+#
+dist = as.numeric(gtf.dist[match(ip$roi, gtf.id)])/1000#
+##calculate enrichment#
+#
+enrichment = function(prefix) {	#
+	ori.cols = grepl(prefix,colnames(ip)) & grepl('ori',colnames(ip))#
+	dup.cols = grepl(prefix,colnames(ip)) & grepl('dup',colnames(ip))#
+	ori.ip = ip$unique_oriCounts +  #unique counts#
+		rowSums(ip[,ori.cols]) +  #RP counts#
+		rowSums(input[,dup.cols])  #misassigned reads that would've come from duplicated region#
+	ori.input = input$unique_oriCounts +#
+		rowSums(input[,ori.cols]) +#
+		rowSums(input[,dup.cols])#
+	dup.ip = ip$unique_dupCounts +  #unique counts#
+		rowSums(ip[,dup.cols]) +  #RP counts#
+		rowSums(input[,ori.cols])  #correct reads that would've come from duplicated region#
+	dup.input = input$unique_dupCounts +#
+		rowSums(input[,dup.cols]) +#
+		rowSums(input[,ori.cols])	#
+	out = data.frame(roi = ip$roi,#
+		ori = log2(ori.ip+1) - log2(ori.input+1),#
+		dup = log2(dup.ip+1) - log2(dup.input+1),#
+		nondup = log2(ip$nondup_counts+1) - log2(input$nondup_counts+1),#
+		dist)#
+	return(out)#
+}
+library(tidyverse)
+library(svglite)
+enr20 = enrichment('20kb')#
+enr20t = tibble(roi = rep(enr20$roi,2),#
+	type = rep(c('ori','dup'), each=nrow(enr20)),#
+	dup = c(enr20$ori, enr20$dup),#
+	nondup = rep(enr20$nondup,2),#
+	dist = rep(enr20$dist,2))
+quartz(w=4, h=4)#
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+quartz(w=4, h=3.5)#
+enr20t %>% filter(dist>=10) %>%#
+ggplot(aes(nondup,dup,colour=type)) +#
+	theme_classic() +#
+	geom_point(size=0.8) +#
+	geom_smooth(method=lm)
+ggsave('~/Downloads/temp.svg')
+quartz(w=4, h=3.5)#
+mutate(enr20t, dclass=cut(dist, c(0,10,20,50))) %>%#
+filter(nondup>=1) %>%#
+ggplot(aes(dclass,dup,fill=type)) +#
+	theme_classic() +#
+	geom_boxplot(outlier.shape=NA) +#
+	ylim(-0.2,2.5)
+ggsave('~/Downloads/temp.svg')
+library(tidyverse)#
+##read intersections between ROIs and peaks#
+#
+data = tibble(roi=character(), nondup=integer(), ori=integer(), dup=integer(), cutoff=integer(), type=character())#
+#
+for (t in 1:10) {#
+	all = read_tsv(paste('roi_peaks/patcher_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	all = add_column(all, cutoff=rep(t,nrow(all)), type=rep('all',nrow(all)))#
+	uni = read_tsv(paste('roi_peaks/unique_intersection_',t,'.txt', sep=''), col_names=colnames(data)[1:4])#
+	uni = add_column(uni, cutoff=rep(t,nrow(uni)), type=rep('uni',nrow(uni)))#
+	data = rbind(data, all, uni)#
+}#
+#
+data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),#
+	dist=as.integer(unlist(lapply(strsplit(roi,'\\"'), function(x) x[2]))))#
+##make ROCs separated by inter-repeat distance#
+#
+roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%#
+	group_by(cutoff, dfac, type) %>%#
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+quartz(w=5, h=4)#
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb')) +#
+	ylim(0,100)
+roc.data %>% filter(type=='all') %>%#
+	ggplot(aes(fdr,recov,colour=dfac)) +#
+	theme_bw() +#
+	xlab('False positive rate') +#
+	ylab('True positive rate') +#
+	geom_point() +#
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb')) +#
+	ylim(0,100)
+dataset = 'Bonev'#
+#
+if (dataset=='Bonev') files = list.files('./counts', pattern='^ESC', full.names=T)#
+if (dataset=='Mumbach') files = list.files('./counts', pattern='^mES_HiChIP_H3K27ac', full.names=T)#
+#
+sp.names = strsplit(files, split='-')#
+group = factor(unlist(lapply(sp.names, function(x) x[2])))#
+#
+counts = data.frame(roi = read.delim(files[1], header=F)$V1) #get ROI names#
+for (g in levels(group)) {#
+	g.files = files[group==g]#
+	g.count = numeric(nrow(counts))#
+	for (f in g.files) g.count = g.count + read.delim(f, header=F)$V2#
+	counts = cbind(counts, g.count)#
+}#
+colnames(counts)[-1] = gsub('\\.txt','',levels(group))#
+counts = counts[!grepl('^__',counts$roi),] #remove extra lines from htseq-count#
+##get distances between original and duplicated ROIs#
+#
+gtf = read.delim('original_ROIs.gtf', header=F, as.is=T)#
+attrib = strsplit(gtf$V9, split='[; ]')#
+gtf.id = unlist(lapply(attrib, function(x) x[5]))#
+gtf.dist = unlist(lapply(attrib, function(x) x[2]))#
+#
+dist = as.numeric(gtf.dist[match(counts$roi, gtf.id)])/1000
+norm.counts = function(prefix, include=c('unique','R','P')) {#
+	ori = dup = numeric(nrow(counts))#
+	if ('unique' %in% include) {#
+		ori = ori+counts[,colnames(counts)=='unique_oriCounts']#
+		dup = dup+counts[,colnames(counts)=='unique_dupCounts']#
+	}#
+	if ('R' %in% include) {#
+		ori = ori+counts[,colnames(counts)==paste(prefix,'R_oriCounts',sep='')]#
+		dup = dup+counts[,colnames(counts)==paste(prefix,'R_dupCounts',sep='')]#
+	}#
+	if ('P' %in% include) {#
+		ori = ori+counts[,colnames(counts)==paste(prefix,'P_oriCounts',sep='')]#
+		dup = dup+counts[,colnames(counts)==paste(prefix,'P_dupCounts',sep='')]#
+	}#
+	ori = ori/counts$nondup_counts*100#
+	dup = dup/counts$nondup_counts*100#
+	out = data.frame(roi=counts$roi, ori, dup, dist)#
+	return(out)#
+}
+library(tidyverse)
+sel.dist = c(5, 10, 20, 30, 50)#
+#
+pdata = rbind(norm.counts('10kb', include='unique') %>% add_column(Ds=0),#
+			norm.counts('10kb') %>% add_column(Ds=10),#
+			norm.counts('20kb') %>% add_column(Ds=10),#
+			norm.counts('40kb') %>% add_column(Ds=10)) %>%#
+			filter(dist %in% sel.dist) %>%#
+			mutate(acc = ori/(dup+ori)*100)
+pdata
+head(data)
+head(pdata)
+sdata = pdata %>% group_by(dist,Ds) %>%#
+	summarise(mrec=mean(ori), sdrec=sd(ori), macc=mean(acc, na.rm=T), sdacc=sd(acc, na.rm=T))
+sdata
+pdata = rbind(norm.counts('10kb', include='unique') %>% add_column(Ds=0),#
+			norm.counts('10kb') %>% add_column(Ds=10),#
+			norm.counts('20kb') %>% add_column(Ds=20),#
+			norm.counts('40kb') %>% add_column(Ds=40)) %>%#
+			filter(dist %in% sel.dist) %>%#
+			mutate(acc = ori/(dup+ori)*100)#
+#
+##summarise#
+#
+sdata = pdata %>% group_by(dist,Ds) %>%#
+	summarise(mrec=mean(ori), sdrec=sd(ori), macc=mean(acc, na.rm=T), sdacc=sd(acc, na.rm=T))
+sdata
+quartz(w=4,h=3)#
+sdata %>% filter(Ds==0 | Ds==20) %>%#
+ggplot(aes(factor(dist), mrec, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+sdata %>% filter(Ds==0 | Ds==20)
+pdata = rbind(norm.counts('10kb', include='unique') %>% add_column(Ds='0kb'),#
+			norm.counts('10kb') %>% add_column(Ds='10kb'),#
+			norm.counts('20kb') %>% add_column(Ds='20kb'),#
+			norm.counts('40kb') %>% add_column(Ds='40kb')) %>%#
+			filter(dist %in% sel.dist) %>%#
+			mutate(acc = ori/(dup+ori)*100)#
+#
+##summarise#
+#
+sdata = pdata %>% group_by(dist,Ds) %>%#
+	summarise(mrec=mean(ori), sdrec=sd(ori), macc=mean(acc, na.rm=T), sdacc=sd(acc, na.rm=T))
+quartz(w=4,h=3)#
+sdata %>% filter(Ds=='0kb' | Ds=='20kb') %>%#
+ggplot(aes(factor(dist), mrec, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+quartz(w=4,h=3)#
+sdata %>% filter(Ds=='0kb' | Ds=='20kb') %>%#
+ggplot(aes(factor(dist), macc, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=macc, ymax=macc+sdacc), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('Accuracy (%)') +#
+	labs(fill='')
+quartz(w=4,h=3)#
+sdata %>%#
+ggplot(aes(factor(dist), mrec, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	#scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+quartz(w=4,h=3)#
+sdata %>%#
+ggplot(aes(factor(dist), macc, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=macc, ymax=macc+sdacc), width=0.2, position=position_dodge(0.8)) +#
+	#scale_fill_manual(values=c('grey','orange')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('Accuracy (%)') +#
+	labs(fill='')
+?colors
+colors()
+quartz(w=5,h=3)#
+sdata %>%#
+ggplot(aes(factor(dist), mrec, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','yellow4','orange','red')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+ggplot(aes(factor(dist), mrec, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','yellow2','orange','red')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+sdata %>%#
+ggplot(aes(factor(dist), mrec, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','yellow2','orange','red')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('% Recovered reads') +#
+	labs(fill='')
+library(svglite)
+ggsave('~/Downloads/temp.svg')
+quartz(w=5,h=3)#
+sdata %>%#
+ggplot(aes(factor(dist), macc, fill=Ds)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +#
+	geom_errorbar(aes(ymin=macc, ymax=macc+sdacc), width=0.2, position=position_dodge(0.8)) +#
+	scale_fill_manual(values=c('grey','yellow2','orange','red')) +#
+	xlab('Inter-repeat distance (kb)') +#
+	ylab('Accuracy (%)') +#
+	labs(fill='')
+ggsave('~/Downloads/temp.svg')

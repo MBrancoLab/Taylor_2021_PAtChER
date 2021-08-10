@@ -1,0 +1,672 @@
+?rainbow
+plot(rep(1,100),type='h',lwd=3,col=hcl.colors(100))
+cj=read.delim('~/Downloads/temp.txt')
+hg=read.delim('~/Downloads/temp_hg38.txt')
+head(cj)
+plot(cj$Position,cj[,2],type='l',lwd=2,col='blue')
+lines(cj[,1],cj[,3],col='red',lwd=2)
+plot(cj$Position,cj[,3],type='l',lwd=2,col='blue')
+lines(cj[,1],cj[,2],col='red',lwd=2)
+plot(cj$Position,cj[,3],type='l',lwd=2,col='blue',ylim=c(0,1))
+lines(cj[,1],cj[,2],col='red',lwd=2)
+lines(cj[,1],cj[,4],col='grey',lwd=2)
+cj=hg
+plot(cj$Position,cj[,3],type='l',lwd=2,col='blue',ylim=c(0,2))
+plot(cj$Position,cj[,3],type='l',lwd=2,col='blue',ylim=c(0,4))
+plot(cj$Position,cj[,3],type='l',lwd=2,col='blue',ylim=c(0,3))
+lines(cj[,1],cj[,2],col='red',lwd=2)
+lines(cj[,1],cj[,4],col='grey',lwd=2)
+paste(rev(strsplit('ed.negnibeut-inu.dem@niL.naneZ',split='')),collapse='')
+paste(rev(unlist(strsplit('ed.negnibeut-inu.dem@niL.naneZ',split=''))),collapse='')
+x=read.delim('~/Downloads/activeTEs_dbSNP_TFBS.txt.gz')
+head(x)
+y=x[!is.na(x$snp2tfbs),]
+nrow(y)
+write.table(y,'temp.txt',quote=F,sep='\t',row.names=F)
+library('tidyverse')
+acc = tibble(reads=c('all','recov'),#
+	mean.acc=c(99.608,93.608),#
+	sd.acc=c(0.015,0.129))
+acc
+ggplot(acc, aes(mean.acc)) +#
+	geom_bar()
+ggplot(acc, aes(y=mean.acc)) +#
+	geom_bar()
+ggplot(acc, aes(mean.acc)) +#
+	geom_bar(stat='identity', width=0.8)
+ggplot(acc, aes(y=mean.acc)) +#
+	geom_bar(stat='identity', width=0.8)
+ggplot(acc, aes(reads,mean.acc)) +#
+	geom_bar(stat='identity', width=0.8)
+ggplot(acc, aes(reads,mean.acc)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') +#
+	geom_bar(stat='identity', width=0.8)
+ggplot(acc, aes(reads,mean.acc)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') +#
+	geom_bar(stat='identity', width=0.8, fill='lightblue', col='black')
+ggplot(acc, aes(reads,mean.acc)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') +#
+	geom_bar(stat='identity', width=0.8, fill='lightblue', col='black') +#
+	geom_errorbar(aes(ymin=mean.acc-sd.acc, ymax=mean.acc+sd.acc))
+ggplot(acc, aes(reads,mean.acc)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') +#
+	geom_bar(stat='identity', width=0.8, fill='lightblue') +#
+	geom_errorbar(aes(ymin=mean.acc-sd.acc, ymax=mean.acc+sd.acc), width=0.2)
+gen = tibble(reads=rep(c('all','recov'),each=3),#
+	d=rep(c('10kb','20kb','40kb'),2)#
+	acc=c(99.6,93.6,99.4,92.9,99,92.4))
+gen = tibble(reads=rep(c('all','recov'),each=3),#
+	d=rep(c('10kb','20kb','40kb'),2),#
+	acc=c(99.6,93.6,99.4,92.9,99,92.4))
+gen
+gen = tibble(reads=rep(c('all','recov'),3),#
+	d=rep(c('10kb','20kb','40kb'),each=2),#
+	acc=c(99.6,93.6,99.4,92.9,99,92.4))
+gen
+ggplot(gen, aes(reads,acc,fill=d)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') +#
+	geom_bar(stat='identity', width=0.8, col='black')
+ggplot(gen, aes(reads,acc,fill=d)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') +#
+	geom_bar(stat='identity', width=0.8, col='black', position=position_dodge())
+?labs
+ggplot(gen, aes(reads,acc,fill=d)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') + labs(fill='')#
+	geom_bar(stat='identity', width=0.8, col='black', position=position_dodge())
+ggplot(gen, aes(reads,acc,fill=d)) +#
+	theme_classic() +#
+	xlab('') + ylab('Accuracy') + labs(fill='') +#
+	geom_bar(stat='identity', width=0.8, col='black', position=position_dodge())
+112106122+753386+5749274
+x=read.delim('Downloads/out.bed',header=F)
+head(x)
+hist(x$V5)
+x=read.delim('Downloads/test.txt',header=F)
+head(x)
+plot(x$V5,x$V6)
+cov=x$V3/x$V2
+plot(cov,x$V6)
+plot(log2(cov),x$V6)
+plot(cov,x$V6)
+x=read.delim('Downloads/sim-1-unpaired_unmatched.bed',as.is=T)
+head(x)
+hist(x$dist)
+hist(x$dist[x$dist<1e9])
+hist(log10(x$dist))
+hist(log10(x$dist),main='',xlab='sim-maped distance')
+hist(log10(x$dist),main='',xlab='sim-mapped distance')
+sum(x$dist<100)
+sum(x$dist<100)/nrow(x)
+r2=grep('_2',x$id)
+hist(log10(x$dist[r2]),main='',xlab='sim-mapped distance')
+r2=grepl('_2',x$id)
+hist(log10(x$dist[!r2]),main='',xlab='sim-mapped distance')
+hist(log10(x$dist[r2]),main='',xlab='sim-mapped distance')
+hist(log10(x$dist[!r2]),main='',xlab='sim-mapped distance')
+2^10
+nchar('gatccGGGATAAGTCAAACCTCACTTCAAGAGAGTGAGGTTTGACTTATCCCTTTTTTCCCGGGg')
+x=read.delim('Downloads/temp_matched_intersect.bed',header=F,as.is=T)
+head(x)
+id=paste(x$V1,x$V2,sep='_')
+id=factor(paste(x$V1,x$V2,sep='_'))
+which(tapply(id,id,length)>1)
+id[132]
+x[x$V1=='chr1' & x$V2==101108309,]
+512*0.6
+828*0.6
+82*0.6
+82*0.7
+512*0.7
+213*320/230
+205/736
+12/178
+3/40
+1/13
+1036/583
+106/583
+60/473
+35/342
+22/247
+t=c(5:10,15,20)
+fdr=c(28,18,13,10,9,7,8,8)
+plot(t,fdr,pch-19,cex=0.5)
+plot(t,fdr,pch=19,cex=0.5)
+9.2/5.4*157
+t=c(124,87,82,102)
+library(tidyverse)
+cube = tibble(name=rep('MB',4),#
+	time=c(124,87,82,102))
+cube
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot()
+ggplot(cube, aes(name, time)) +#
+	geom_jitter()
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot(binaxis='y')
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot(binaxis='y', stackdir='centre')
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot(binaxis='y', stackdir='center')
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot(binaxis='y', stackdir='center') +#
+	ylim(0,200)
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot(binaxis='y', stackdir='center') +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube = tibble(name=rep('MB',5),#
+	time=c(124,87,82,102,88))#
+ggplot(cube, aes(name, time)) +#
+	geom_dotplot(binaxis='y', stackdir='center') +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+?geom_dotplot
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter() +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.2)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube = tibble(name=rep('MB',6),#
+	time=c(124,87,82,102,88.127))#
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.2)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.1)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube = tibble(name=rep('MB',6),#
+	time=c(124,87,82,102,88,127))#
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.1)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube = tibble(name=rep('MB',7),#
+	time=c(124,87,82,102,88,127,95))#
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.1)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube = tibble(name=rep(c('MZB','BZB'),c(7,1)),#
+	time=c(124,87,82,102,88,127,95,#
+		111))#
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.1)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube = tibble(name=rep(c('MZB','BZB'),c(7,3)),#
+	time=c(124,87,82,102,88,127,95,#
+		111,83,97))#
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.1)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')
+cube %>% group_by(name) %>% summarise(av=mean(time))
+cube = tibble(name=rep(c('MZB','BZB'),c(7,4)),#
+	time=c(124,87,82,102,88,127,95,#
+		111,83,97,112))#
+ggplot(cube, aes(name, time)) +#
+	geom_boxplot() +#
+	geom_jitter(position=position_jitter(0.1)) +#
+	ylim(0,200) +#
+	xlab('') +#
+	ylab('time (s)')#
+#
+cube %>% group_by(name) %>% summarise(av=mean(time))
+1956/14785
+1378/9897
+barplot(100,126.5)
+barplot(c(100,126.5),col='black',names.arg=c('WT','KO'),ylab='Relative number of cells')
+barplot(c(100,126.5),col='black',names.arg=c('WT','KO'),ylab='Relative number of cells',width=0.5)
+barplot(c(100,126.5),col='black',names.arg=c('WT','KO'),ylab='Relative number of cells')
+a=c(25,25,17)
+b=c(34,30,21)
+?t.test
+t.test(a,b,paired=T)
+t.test(c(136,120,123.5))
+100/124*150
+789/2
+789/4
+1148/2
+1148/4
+l1='GGGGGAGGAGCCAAGATGGCCGAATAGGAACAGCTCCGGTCTACAGCTCCCAGCGTGAGCGACGCAGAAGACGGTGATTTCTGCATTTCCATCTGAGGTACCGGGTTCATCTCACTAGGGAGTGCCAGACAGTGGGCGCAGGCCAGTGTGTGTGCGCACCGTGCGCGAGCCGAAGCAGGGCGAGGCATTGCCTCACCTGGGAAGCGCAAGGGGTCAGGGAGTTCCCTTTCTGAGTCAAAGAAAGGGGTGACGGTCGCACCTGGAAAATCGGGTCACTCCCACCCGAATATTGCGCTTTTCAGACCGGCTTAAGAAACGGCGCACCACGAGACTATATCCCACACCTGGCTCGGAGGGTCCTACGCCCACGGAATCTCGCTGATTGCTAGCACAGCAGTCTGAGATCAAACTGCAAGGCGGCAACGAGGCTGGGGGAGGGGCGCCCGCCATTGCCCAGGCTTGCTTAGGTAAACAAAGCAGCCGGGAAGCTCGAACTGGGTGGAGCCCACCACAGCTCAAGGAGGCCTGCCTGCCTCTGTAGGCTCCACCTCTGGGGGCAGGGCACAGACAAACAAAAAGGCAGCAGTAACCTCTGCAGACTTAAGTGTCCCTGTCTGACAGCTTTGAAGAGAGCAGTGGTTCTCCCAGCACGCAGCTGGAGATCTGAGAACGGGCAGACAGACTGCCTCCTCAAGTGGGTCCCTGACTCCTGACCCCCGAGCAGCCTAACTGGGAGGCACCCCCCAGCAGGGGCACACTGACACCTCACACGGCAGGGTATTCCAACAGACCTGCAGCTGAGGGTCCTGTCTGTTAGAAGGAAAACTAACAACCAGAAAGGACATCTACACCGAAAACCCATCTGTACATCACCATCATCAAAGACCAAAAGTAGATAAAACCACAAAGATGGGGAAAAAACAGAACAGAAAAACTGGAAACTCTAAAACGCAGAGCGCCTCTCCTCCTCCAAAGGAACGCAGTTCCTCACCAGCAACAGAACAAAGCTGGATGGAGA
+ATGATTTTGACGAGCTGAGAGAAGAAGGCTTCAGACGATCAAATTACTCTGAGCTACGGGAGGACATTCAAACCAAAGGCAAAGAAGTTGAAAACTTTGAAAAAAATTTAGAAGAATGTATAACTAGAATAACCAATACAGAGAAGTGCTTAAAGGAGCTGATGGAGCTGAAAACCAAGGCTCGAGAACTACGTGAAGAATGCAGAAGCCTCAGGAGCCGATGCGATCAACTGGAAGAAAGGGTATCAGCAATGGAAGATGAAATGAATGAAATGAAGCGAGAAGGGAAGTTTAGAGAAAAAAGAATAAAAAGAAATGAGCAAAGCCTCCAAGAAATATGGGACTATGTGAAAAGACCAAATCTACGTCTGATTGGTGTACCTGAAAGTGATGTGGAGAATGGAACCAAGTTGGAAAACACTCTGCAGGATATTATCCAGGAGAACTTCCCCAATCTAGCAAGGCAGGCCAACGTTCAGATTCAGGAAATACAGAGAACGCCACAAAGATACTCCTCGAGAAGAGCAACTCCAAGACACATAATTGTCAGATTCACCAAAGTTGAAATGAAGGAAAAAATGTTAAGGGCAGCCAGAGAGAAAGGTCGGGTTACCCTCAAAGGAAAGCCCATCAGACTAACAGTGGATCTCTCGGCAGAAACCCTACAAGCCAGAAGAGAGTGGGGGCCAATATTCAACATTCTTAAAGAAAAGAATTTTCAACCCAGAATTTCATATCCAGCCAAACTAAGCTTCATAAGTGAAGGAGAAATAAAATACTTTATAGACAAGCAAATGTTGAGAGATTTTGTCACCACCAGGCCTGCCCTAAAAGAGCTCCTGAAGGAAGCGCTAAACATGGAAAGGAACAACCGGTACCAGCCGCTGCAAAATCATGCCAAAATGTAAAGACCATTGAGACTAGGAAGAAACTGCATCAACTAATGAGCAAAATCACCAGCTAACATCATAATGACAGGATCAAATTCACACATAACAATATTAACTTTAAATATAAATGGA
+CTAAATTCTGCAATTAAAAGACACAGACTGGCAAGTTGGATAAAGAGTCAAGACCCATCAGTGTGCTGTATTCAGGAAACCCATCTCACGTGCAGAGACACACATAGGCTCAAAATAAAAGGATGGAGGAAGATCTACCAAGCCAATGGAAAACAAAAAAAGGCAGGGGTTGCAATCCTAGTCTCTGATAAAACAGACTTTAAACCAACAAAGATCAAAAGAGACAAAGAAGGCCATTACATAATGGTAAAGGGATCAATTCAACAAGAGGAGCTAACTATCCTAAATATTTATGCACCCAATACAGGAGCACCCAGATTCATAAAGCAAGTCCTGAGTGACCTACAAAGAGACTTAGACTCCCACACATTAATAATGGGAGACTTTAACACCCCACTGTCAACATTAGACAGATCAACGAGACAGAAAGTCAACAAGGATACCCAGGAATTGAACTCAGCTCTGCACCAAGCAGACCTAATAGACATCTACAGAACTCTCCACCCCAAATCAACAGAATATACCTTTTTTTCAGCACCACACCACACCTATTCCAAAATTGACCACATAGTTGGAAGTAAAGCTCTCCTCAGCAAATGTAAAAGAACAGAAATTATAACAAACTATCTCTCAGACCACAGTGCAATCAAACTAGAACTCAGGATTAAGAATCTCACTCAAAGCCGCTCAACTACATGGAAACTGAACAACCTGCTCCTGAATGACTACTGGGTACATAACGAAATGAAGGCAGAAATAAAGATGTTCTTTGAAACCAACGAGAACAAAGACACCACATACCAGAATCTCTGGGACGCATTCAAAGCAGTGTGTAGAGGGAAATTTATAGCACTAAATGCCTACAAGAGAAAGCAGGAAAGATCCAAAATTGACACCCTAACATCACAATTAAAAGAACTAGAAAAGCAAGAGCAAACACATTCAAAAGCTAGCAGAAGGCAAGAAATAACTAAAATCAGAGCAGAACTGAAGGAAATAGAGACACAAAAAACCCTTCAAAA
+AATCAATGAATCCAGGAGCTGGTTTTTTGAAAGGATCAACAAAATTGATAGACCGCTAGCAAGACTAATAAAGAAAAAAAGAGAGAAGAATCAAATAGACACAATAAAAAATGATAAAGGGGATATCACCACCGATCCCACAGAAATACAAACTACCATCAGAGAATACTACAAACACCTCTACGCAAATAAACTAGAAAATCTAGAAGAAATGGATACATTCCTCGACACATACACTCTCCCAAGACTAAACCAGGAAGAAGTTGAATCTCTGAATAGACCAATAACAGGCTCTGAAATTGTGGCAATAATCAATAGTTTACCAACCAAAAAGAGTCCAGGACCAGATGGATTCACAGCCGAATTCTACCAGAGGTACATGGAGGAACTGGTACCATTCCTTCTGAAACTATTCCAATCAATAGAAAAAGAGGGAATCCTCCCTAACTCATTTTATGAGGCCAGCATCATTCTGATACCAAAGCCGGGCAGAGACACAACCAAAAAAGAGAATTTTAGACCAATATCCTTGATGAACATTGATGCAAAAATCCTCAATAAAATACTGGCAAACCGAATCCATTAGCACATCAAAAAGCTTATCCACCATGATCAAGTGGGCTTCATCCCTGGGATGCAAGGCTGGTTCAATATACGCAAATCAATAAATGTAATCCAGCATATAAACAGAGCCAAAGACAAAAACCACATGATTATCTCAATAGATGCAGAAAAAGCCTTTGACAAAATTCAACAACCCTTCATGCTAAAAACTCTCAATAAATTAGGTATTGATGGGACGTATTTCAAAATAATAAGAGCTATCTATGACAAACCCACAGCCAATATCATACTGAATGGGCAAAAACTGGAAGCATTCCCTTTGAAAACCGGCACAAGACAGGGATGCCCTCTCTCACCGCTCCTATTCAACATAGTGTTGGAAGTTCTGGCCAGGGCAATCAGGCAGGAGAAGGAAATAAAGGGTATTCAATTAGGAAAAGAGGAAGTCAAATTGTCCC
+TGTTTGCAGACGACATGATTGTATATCTAGAAAACCCCATCGTCTCAGCCCAAAATCTCCTTAAGCTGATAAGCAACTTCAGCAAAGTCTCAGGATACAAAATCAATGTACAAAAATCACAAGCATTCTTATACACCAACAACAGACAAACAGAGAGCCAAATCATGGGTGAACTCCCATTCGTAATTGCTTCAAAGAGAATAAAATACCTAGGAATCCAACTTACAAGGGATGTGAAGGACCTCTTCAAGGAGAACTACAAACCACTGCTCAAGGAAATAAAAGAGGACACAAACAAATGGAAGAACATTCCATGCTCATGGGTAGGAAGAATCAATATCGTGAAAATGGCCATACTGCCCAAGGTAATTTACAGATTCAATGCCATCCCCATCAAGCTACCAATGACTTTCTTCACAGAATTGGAAAAAACTACTTTAAAGTTCATATGGAACCAAAAAAGAGCCCGCATTGCCAAGTCAATCCTAAGCCAAAAGAACAAAGCTGGAGGCATCACACTACCTGACTTCAAACTATACTACAAGGCTACAGTAACCAAAACAGCATGGTACTGGTACCAAAACAGAGATATAGATCAATGGAACAGAACAGAGCCCTCAGAAATAATGCCGCATATCTACAACTATCTGATCTTTGACAAACCTGAGAAAAACAAGCAATGGGGAAAGGATTCCCTATTTAATAAATGGTGCTGGGAAAACTGGCTAGCCATATGTAGAAAGCTGAAACTGGATCCCTTCCTTACACCTTATACAAAAATCAATTCAAGATGGATTAAAGATTTAAACGTTAAACCTAAAACCATAAAAACCCTAGAAGAAAACCTAGGCATTACCATTCAGGACATAGGCGTGGGCAAGGACTTCATGTCCAAAACACCAAAAGCAATGGCAACAAAAGACAAAATTGACAAATGGGATCTAATTAAACTAAAGAGCTTCTGCACAGCAAAAGAAACTACCATCAGAGTGAACAGGCAACCTACAACATGGGAGAAAATT
+TTCGCAACCTACTCATCTGACAAAGGGCTAATATCCAGAATCTACAATGAACTCAAACAAATTTACAAGAAAAAAACAAACAACCCCATCAAAAAGTGGGTGAAGGACATGAACAGACACTTCTCAAAAGAAGACATTTATGCAGCCAAAAAACACATGAAGAAATGCTCATCATCACTGGCCATCAGAGAAATGCAAATCAAAACCACTATGAGATATCATCTCACACCAGTTAGAATGGCAATCATTAAAAAGTCAGGAAACAACAGGTGCTGGAGAGGATGCGGAGAAATAGGAACACTTTTACACTGTTGGTGGGACTGTAAACTAGTTCAACCATTGTGGAAGTCAGTGTGGCGATTCCTCAGGGATCTAGAACTAGAAATACCATTTGACCCAGCCATCCCATTACTGGGTATATACCCAAATGAGTATAAATCATGCTGCTATAAAGACACATGCACACGTATGTTTATTGCGGCACTATTCACAATAGCAAAGACTTGGAACCAACCCAAATGTCCAACAATGATAGACTGGATTAAGAAAATGTGGCACATATACACCATGGAATACTATGCAGCCATAAAAAATGATGAGTTCATATCCTTTGTAGGGACATGGATGAAATTGGAAACCATCATTCTCAGTAAACTATCGCAAGAACAAAAAACCAAACACCGCATATTCTCACTCATAGGTGGGAATTGAACAATGAGATCACATGGACACAGGAAGGGGAATATCACACTCTGGGGACTGTGGTGGGGTCGGGGGAGGGGGGAGGGATAGCATTGGGAGATATACCTAATGCTAGATGACACATTAGTGGGTGCAGCGCACCAGCATGGCACATGTATACATATGTAACTAACCTGCACAATGTGCACATGTACCCTAAAACTTAGAGTATAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+grep('GATC',l1)
+?grep
+grepexpr('GATC',l1)
+gregexpr('GATC',l1)
+dpn=gregexpr('GATC',l1)[[1]]
+dpn
+plot(c(1,dpn,nchar(l1)),rep(1,length(dpn)+2))
+setwd('Dropbox/PAtChER_code/HiChIP_mouse/ESC_H3K27ac/')
+library(tidyverse)#
+##MERVL-int elements larger than 4kb#
+##clustered by plotHeatmap#
+##with info of nearest gene#
+#
+mervl = read_tsv('MERVL-int_4kb_closestGene.txt', col_names=FALSE) %>%#
+	select(X1,X2,X3,X6,X13,X22,X23) %>%#
+	mutate(gene_id=unlist(lapply(strsplit(X22,split='"'), function(x) x[2])))#
+colnames(mervl) = c('chr','start','end','strand','cluster','gene','dist','gene_id')#
+##add RNA-seq data#
+#
+rna = read_tsv('E14-geneCounts.txt', col_names=c('gene_id','counts')) %>%#
+	mutate(rna.rpm = log2(1e6*(counts+1)/(sum(counts)+1))) %>%#
+	select(-counts)#
+#
+mervl = inner_join(mervl, rna, by='gene_id')
+mervl
+mervl %>% filter(dist>10000, cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + geom_violin()
+mervl %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster,log10(dist+1))) +#
+	geom_violin() +#
+	stat_summary(fun='median', geom='point', position=position_dodge())
+mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,1e6,max(dist)))) %>%#
+	group_by(cluster) %>%#
+	summarise(perc = tapply(dcat, length)/length(dcat)*100)
+mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,1e6,max(dist))))
+mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,1e6,max(dist)))) %>%#
+	group_by(cluster) %>%#
+	summarise(perc = tapply(dcat, dcat, length)/length(dcat)*100)
+mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,1e6,max(dist)))) %>%#
+	group_by(cluster, dcat) %>%#
+	summarise(n=length(dcat))
+mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,max(dist)))) %>%#
+	group_by(cluster, dcat) %>%#
+	summarise(n=length(dcat))
+sum.dist = mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,max(dist)))) %>%#
+	group_by(cluster, dcat) %>%#
+	summarise(n=length(dcat)) %>%
+ggplot(aes(cluster,n))+geom_bar()
+sum.expr = mervl %>% mutate(ecat = cut(rna.rpm, quantile(rna.rpm))) %>%#
+	group_by(cluster, ecat) %>%#
+	summarise(n=length(ecat))
+?quantile
+sum.expr = mervl %>% mutate(ecat = cut(rna.rpm, quantile(rna.rpm, c(0.25,0.5,0.75,1)))) %>%#
+	group_by(cluster, ecat) %>%#
+	summarise(n=length(ecat))
+sum.expr = mervl %>% mutate(ecat = cut(rna.rpm, quantile(rna.rpm, c(0.5,0.75,1)))) %>%#
+	group_by(cluster, ecat) %>%#
+	summarise(n=length(ecat))
+sum.expr
+quantile(mervl$rna.rpm, c(0.5,0.75,1))
+mervl %>% filter(dist>10000, cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + geom_violin()
+mervl %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + geom_violin()
+mervl %>% filter(dist<10000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + geom_violin()
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + geom_violin()
+mervl %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster,log10(dist+1))) +#
+	geom_violin()
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, dcat)) +#
+	geom_bar()
+sum.dist = mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,max(dist)))) %>%#
+	group_by(cluster, dcat) %>%#
+	summarise(n=length(dcat))#
+#
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, dcat)) +#
+	geom_bar()
+?geom_bar
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, dcat)) +#
+	geom_bar(stat='identity')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n)) +#
+	geom_bar(stat='identity')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	geom_bar(stat='identity')
+?geom_bar
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	geom_bar(stat='identity', position='fill')
+sum.dist
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin()
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	geom_boxplot(width=0.1) +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun.data=mean_sdl, mult=1, geom="pointrange") +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun.data=median) +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun.data=median, geom='point') +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun.y=median, geom='point') +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun.y=median) +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun=median) +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun=median, size=0.7) +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun=median, size=0.5) +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin() +#
+	stat_summary(fun=median, geom='point') +#
+	xlab('') +#
+	ylab('log2 RPM')
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin(fill='wheat') +#
+	stat_summary(fun=median, geom='point') +#
+	xlab('') +#
+	ylab('log2 RPM')
+quartz(w=4,h=4)#
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin(fill='wheat') +#
+	stat_summary(fun=median, geom='point') +#
+	xlab('') +#
+	ylab('log2 RPM')
+ggsave('~/Downloads/expr.png')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	geom_bar(stat='identity', position='fill')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	geom_bar(stat='identity', position='fill')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	geom_bar(stat='identity', position='fill')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat, order=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	geom_bar(stat='identity', position='fill')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	geom_bar(stat='identity', position=position_stack(reverse=TRUE))
+?position_stack
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE))
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black')
+?blues
+??blues
+colorRampPallete
+? colorRampPalette
+colorRampPalette(c('lightblue','navy'))(4)
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4)) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black')
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4)) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.8)
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4)) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+?labels
+?labs
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4)) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Distance') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4)) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+quartz(w=4,h=4)#
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Distance') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4)) +#
+	scale_fill_discrete(labels=c('overlapping','<10kb','10-100kb','>100kb')) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Distance') +#
+	scale_fill_discrete(values=colorRampPalette(c('lightblue','navy'))(4),#
+		labels=c('overlapping','<10kb','10-100kb','>100kb')) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Distance') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4),#
+		labels=c('overlapping','<10kb','10-100kb','>100kb')) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+ggsave('~/Downloads/dist.png')
+mervl
+mervl %>% select(chr,start,end,strand,cluster) %>%#
+write_tsv(file='temp.bed',col_names=FALSE)
+system('~/Documents/bedtools2/bin/intersectBed -wa -wb -a temp.bed -b AB_compartments.txt > comp.bed')
+system('~/Documents/bedtools2/bin/intersectBed -wao -a temp.bed -b AB_compartments.txt > comp.bed')
+comp = read_tsv('comp.bed', col_names=FALSE)
+comp
+unlink(c('temp.bed','comp.bed'))
+comp %>% group_by(X5,X9) %>%#
+	summarise(n=length(X9))
+sum.comp = comp %>% group_by(X5,X9) %>%#
+	summarise(n=length(X9))
+colnames(sum.comp) = c('cluster','comp','n')
+quartz(w=4,h=4)#
+sum.comp %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=comp)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Compartment') +#
+	scale_fill_manual(values=c('grey','green','red'),#
+		labels=c('unnanotated','A','B')) +#
+	geom_bar(stat='identity', position=position_fill(), col='black', width=0.7)
+ggsave('~/Downloads/comp.png')
+library(tidyverse)
+library(svg_lite)
+library(svglite)
+mervl = read_tsv('MERVL-int_4kb_closestGene.txt', col_names=FALSE) %>%#
+	select(X1,X2,X3,X6,X13,X22,X23) %>%#
+	mutate(gene_id=unlist(lapply(strsplit(X22,split='"'), function(x) x[2])))#
+colnames(mervl) = c('chr','start','end','strand','cluster','gene','dist','gene_id')#
+##add RNA-seq data#
+#
+rna = read_tsv('E14-geneCounts.txt', col_names=c('gene_id','counts')) %>%#
+	mutate(rna.rpm = log2(1e6*(counts+1)/(sum(counts)+1))) %>%#
+	select(-counts)#
+#
+mervl = inner_join(mervl, rna, by='gene_id')
+sum.dist = mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,max(dist)))) %>%#
+	group_by(cluster, dcat) %>%#
+	summarise(n=length(dcat))#
+#
+quartz(w=3,h=3.5)#
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Distance') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4),#
+		labels=c('overlapping','<10kb','10-100kb','>100kb')) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+quartz(w=3.5,h=3.5)#
+sum.dist %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=dcat)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Distance') +#
+	scale_fill_manual(values=colorRampPalette(c('lightblue','navy'))(4),#
+		labels=c('overlapping','<10kb','10-100kb','>100kb')) +#
+	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)
+ggsave('~/Downloads/temp.svg')
+quartz(w=3,h=3.5)#
+mervl %>% filter(dist<100000,cluster!='cluster_4') %>%#
+ggplot(aes(cluster,rna.rpm)) + #
+	theme_classic() +#
+	geom_violin(fill='lightblue') +#
+	stat_summary(fun=median, geom='point') +#
+	xlab('') +#
+	ylab('log2 RPM')
+ggsave('~/Downloads/temp.svg')
+mervl %>% select(chr,start,end,strand,cluster) %>%#
+write_tsv(file='temp.bed',col_names=FALSE)#
+#
+system('~/Documents/bedtools2/bin/intersectBed -wao -a temp.bed -b AB_compartments.txt > comp.bed')#
+comp = read_tsv('comp.bed', col_names=FALSE)#
+unlink(c('temp.bed','comp.bed'))#
+##plot A/B comparment data#
+#
+sum.comp = comp %>% group_by(X5,X9) %>%#
+	summarise(n=length(X9))#
+colnames(sum.comp) = c('cluster','comp','n')
+quartz(w=3,h=3.5)#
+sum.comp %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=comp)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Compartment') +#
+	scale_fill_manual(values=c('grey','green','red'),#
+		labels=c('unnanotated','A','B')) +#
+	geom_bar(stat='identity', position=position_fill(), col='black', width=0.7)
+quartz(w=3.5,h=3.5)#
+sum.comp %>% filter(cluster!='cluster_4') %>%#
+ggplot(aes(cluster, n, fill=comp)) +#
+	theme_classic() +#
+	xlab('') +#
+	ylab('Fraction') +#
+	labs(fill='Compartment') +#
+	scale_fill_manual(values=c('grey','green','red'),#
+		labels=c('unnanotated','A','B')) +#
+	geom_bar(stat='identity', position=position_fill(), col='black', width=0.7)
+ggsave('~/Downloads/temp.svg')

@@ -1,0 +1,178 @@
+##functions#
+#
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1)[,-1]#
+	tibble(bins=as.numeric(df[1,]),#
+		rpm=as.numeric(df[2,]),#
+		type=case_when(grepl('uni',file)~'uni',#
+			grepl('all',file)~'all'))#
+}#
+#
+get_data = function(uni.file, all.file) {#
+	rbind(parse_file(uni.file), parse_file(all.file))#
+}#
+#
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*4-dist, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(kb, log.rpm, color=type)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line() +#
+		scale_colour_manual(values=c('orange','grey'))#
+}#
+##plots#
+#
+mervl = get_data('ESC-uni-mervl_trend.txt','ESC-all-mervl_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+library(tidyverse)
+library(svglite)
+mervl = get_data('ESC-uni-mervl_trend.txt','ESC-all-mervl_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+?geom_line
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*4-dist, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(kb, log.rpm, color=type)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=2) +#
+		scale_colour_manual(values=c('orange','grey'))#
+}#
+##plots#
+#
+mervl = get_data('ESC-uni-mervl_trend.txt','ESC-all-mervl_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*4-dist, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(kb, log.rpm, color=type)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1.5) +#
+		scale_colour_manual(values=c('orange','grey'))#
+}#
+##plots#
+#
+mervl = get_data('ESC-uni-mervl_trend.txt','ESC-all-mervl_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*4-dist, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(kb, log.rpm, color=type)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey'))#
+}#
+##plots#
+#
+mervl = get_data('ESC-uni-mervl_trend.txt','ESC-all-mervl_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+ggsave('~/Downloads/temp.svg')
+l1hs = get_data('P2102EP-uni-l1_trend.txt','P2102EP-all-l1_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+ggsave('~/Downloads/temp.svg')
+library(tidyverse)
+file='P2102Ep-l1_trend.txt'
+df = read.delim(file, row.names=1)[,-1]
+df
+df = read.delim(file, row.names=1)[,-1]
+df = read.delim(file, row.names=1, skip=1, header=F)
+df
+df = read.delim(file, row.names=1, skip=1, header=F)[,-1]
+df
+rep(df[1,],2)
+rep(as.numeric(df[1,]),2)
+c(as.numeric(df[2,]),as.numeric(df[3,]))
+rep(c('all','uni'),each=ncol(df))
+tibble(bins=rep(as.numeric(df[1,]),2),#
+		rpm=c(as.numeric(df[2,]),as.numeric(df[3,])),#
+		type=rep(c('all','uni'),each=ncol(df)))
+l1hs = parse_file('P2102Ep-l1_trend.txt')
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1, skip=1, header=F)[,-1]#
+	tibble(bins=rep(as.numeric(df[1,]),2),#
+		rpm=c(as.numeric(df[2,]),as.numeric(df[3,])),#
+		type=rep(c('all','uni'),each=ncol(df)))#
+}
+l1hs = parse_file('P2102Ep-l1_trend.txt')
+l1hs
+data=l1hs
+mutate(data, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(bins, log.rpm, color=type)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey'))
+mutate(data, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(bins, log.rpm, color=type)) +#
+		theme_classic() +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey')) +#
+		scale_x_discrete(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))
+mutate(data, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(bins, log.rpm, color=type)) +#
+		theme_classic() +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey')) +#
+		scale_x_discrete(name='', breaks=c(0,20,80,100))
+mutate(data, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(bins, log.rpm, color=type)) +#
+		theme_classic() +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey')) +#
+		scale_x_discrete(breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))
+mutate(data, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(bins, log.rpm, color=type)) +#
+		theme_classic() +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey')) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))
+plot_trend = function(data, dist=5) {#
+	mutate(data, log.rpm=log2(rpm)) %>%#
+	ggplot(aes(bins, log.rpm, color=type)) +#
+		theme_classic() +#
+		ylab('log2 mean RPM') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_colour_manual(values=c('orange','grey')) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}
+l1hs = parse_file('P2102Ep-l1_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+ggsave('~/Downloads/temp.svg')
+mervl = get_data('ESC-mervl_trend.txt')
+mervl = parse_file('ESC-mervl_trend.txt')
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+mervl = parse_file('ESC-mervl_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+mervl
+quartz(w=4.5,h=2.5)#
+plot_trend(mervl)
+ggsave('~/Downloads/temp.svg')

@@ -1,0 +1,135 @@
+library(tidyverse)#
+##track-specific peaks intersected with repeatmasker (w/o simple repeats)#
+#
+cnames = c('chr.peak', 'start.peak', 'end.peak',#
+	'chr.rep', 'start.rep', 'end.rep', 'repname', 'score', 'strand', 'overlap')#
+all = read_tsv('E14_meDIP-all_norm_intersect_rm.txt', col_names=cnames) %>% add_column(type='all')#
+uni = read_tsv('E14_meDIP-uni_norm_intersect_rm.txt', col_names=cnames) %>% add_column(type='uni')#
+data = rbind(all, uni) %>% mutate(is.rep=repname!='.', coord=paste(chr.peak,start.peak))#
+##number of peaks#
+#
+n.peaks = data %>% group_by(type, is.rep) %>% summarise(n=length(unique(coord)))#
+#
+quartz(w=4,h=4)#
+ggplot(n.peaks, aes(type, n, fill=is.rep)) +#
+	geom_bar(stat='identity', colour='black')
+fam.peaks = data %>%	 filter(repname!='.') %>%#
+	group_by(type, repname) %>% summarise(n=length(unique(coord))) %>%#
+	pivot_wider(names_from=type, values_from=n, values_fill=0)#
+#
+quartz(w=4,h=4)#
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change')
+ggsave('~/Downloads/temp.png')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') =#
+	geom_point(data=filter(fam.peaks,repname=='IAPEz-int'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPEz-int'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+fam.peaks %>% filter(all>uni*2)
+print(fam.peaks %>% filter(all>uni*2), n=34)
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='RLTR10-int'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='MERVL-int'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='RLTR6-int'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPLTR1_Mm'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPLTR1a_Mm'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPLTR2_Mm'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPLTR2a_Mm'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPLTR2a'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='RLTR6-int'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='blue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change') +#
+	geom_point(data=filter(fam.peaks,repname=='IAPLTR1a_Mm'), mapping=aes(log10(uni+1), log2(all+1)-log2(uni+1)), colour='red')
+library(tidyverse)#
+##track-specific peaks intersected with repeatmasker (w/o simple repeats)#
+#
+cnames = c('chr.peak', 'start.peak', 'end.peak',#
+	'chr.rep', 'start.rep', 'end.rep', 'repname', 'score', 'strand', 'overlap')#
+all = read_tsv('E14_meDIP-all_norm_intersect_rm.txt', col_names=cnames) %>% add_column(type='all')#
+uni = read_tsv('E14_meDIP-uni_norm_intersect_rm.txt', col_names=cnames) %>% add_column(type='uni')#
+data = rbind(all, uni) %>% mutate(is.rep=repname!='.', coord=paste(chr.peak,start.peak))
+fam.peaks = data %>%	 filter(repname!='.') %>%#
+	group_by(type, repname) %>% summarise(n=length(unique(coord))) %>%#
+	pivot_wider(names_from=type, values_from=n, values_fill=0)#
+#
+quartz(w=3.5,h=3.5)#
+ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +#
+	geom_point(size=0.8, colour='lightblue') +#
+	theme_classic() +#
+	geom_hline(yintercept=0,linetype='dashed') +#
+	xlab('log10 unique peaks') +#
+	ylab('log2 fold change')
+libary(svglite)
+library(svglite)
+ggsave('~/Downloads/temp.svg')

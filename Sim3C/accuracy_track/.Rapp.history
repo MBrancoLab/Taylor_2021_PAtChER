@@ -1,0 +1,235 @@
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1)[,-1]#
+	tibble(bins=as.numeric(df[1,]),#
+		acc=as.numeric(df[2,]))#
+}
+l1hs = parse_file('l1hs_accuracy.txt')
+library('tidyverse')
+l1hs = parse_file('l1hs_accuracy.txt')
+l1hs
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1)[,-1]#
+	tibble(bins=as.numeric(df[1,]),#
+		acc=as.numeric(df[2,])*100)#
+}
+l1hs = parse_file('l1hs_accuracy.txt')
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*4-dist) %>%#
+	ggplot(aes(kb, acc, color='black')) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('Accuracy') +#
+		geom_line()#
+}
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*4-dist) %>%#
+	ggplot(aes(kb, acc)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('Accuracy') +#
+		ylim(0,100) +#
+		geom_line()#
+}#
+##plots#
+#
+l1hs = parse_file('l1hs_accuracy.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*2-dist) %>%#
+	ggplot(aes(kb, acc)) +#
+		theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('Accuracy') +#
+		ylim(0,100) +#
+		geom_line()#
+}#
+##plots#
+#
+l1hs = parse_file('l1hs_accuracy.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+quartz(w=3.5,h=2.5)#
+plot_trend(l1hs)
+plot_trend = function(data, dist=5) {#
+	mutate(data, kb=bins/nrow(data)*dist*2-dist) %>%#
+	ggplot(aes(kb, acc)) +#
+		#theme_classic() +#
+		xlab('Distance to center (kb)') +#
+		ylab('Accuracy') +#
+		ylim(0,100) +#
+		geom_line(colour='red')#
+}#
+##plots#
+#
+l1hs = parse_file('l1hs_accuracy.txt')#
+quartz(w=3.5,h=2.5)#
+plot_trend(l1hs)
+ggsave('~/Downloads/temp.png')
+library(tidyverse)
+library(svglite)
+file='accuracy-l1_trend.txt'
+df = read.delim(file, row.names=1, skip=1, header=F)[,-1]
+df
+tibble(bins=rep(as.numeric(df[1,]),2),#
+		acc=as.numeric(df[2,]))
+tibble(bins=as.numeric(df[1,]),#
+		acc=as.numeric(df[2,]))
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1, skip=1, header=F)[,-1]#
+	tibble(bins=as.numeric(df[1,]),#
+		acc=as.numeric(df[2,]))#
+}#
+#
+plot_trend = function(data, dist=5) {#
+	ggplot(data, aes(bins, acc)) +#
+		theme_classic() +#
+		ylab('Accuracy (%)') +#
+		labs(color='') +#
+		geom_line(size=1) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}#
+##plots#
+#
+l1hs = parse_file('accuracy-l1_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1, skip=1, header=F)[,-1]#
+	tibble(bins=as.numeric(df[1,]),#
+		acc=as.numeric(df[2,])*100)#
+}#
+#
+plot_trend = function(data, dist=5) {#
+	ggplot(data, aes(bins, acc)) +#
+		theme_classic() +#
+		ylab('Accuracy (%)') +#
+		labs(color='') +#
+		geom_line(colour='lightblue', size=1) +#
+		ylim(0,100) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}#
+##plots#
+#
+l1hs = parse_file('accuracy-l1_trend.txt')#
+quartz(w=4.5,h=2.5)#
+plot_trend(l1hs)
+quartz(w=4,h=2.5)#
+plot_trend(l1hs)
+quartz(w=4,h=3)#
+plot_trend(l1hs)
+plot_trend = function(data, dist=5) {#
+	ggplot(data, aes(bins, acc)) +#
+		theme_classic() +#
+		ylab('Accuracy (%)') +#
+		labs(color='') +#
+		geom_line(colour='#4A90E2', size=1) +#
+		ylim(0,100) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}#
+##plots#
+#
+l1hs = parse_file('accuracy-l1_trend.txt')#
+quartz(w=4,h=3)#
+plot_trend(l1hs)
+ggsave('~/Downloads/temp.png')
+ggsave('~/Downloads/temp.svg')
+quartz(w=4,h=2.8)#
+plot_trend(l1hs)
+ggsave('~/Downloads/temp.svg')
+plot_trend(l1hs) + geom_vline(xintercept=c(20,80))
+plot_trend(l1hs) + geom_vline(xintercept=c(20,80), linetype='dashed')
+ggsave('~/Downloads/temp.svg')
+library(tidyverse)
+parse_file = function(file) {#
+	df = read.delim(file, row.names=1, skip=1, header=F)[,-1]#
+	tibble(bins=as.numeric(df[1,]),#
+		acc=as.numeric(df[2,])*100)#
+}#
+#
+plot_trend = function(data, dist=5) {#
+	ggplot(data, aes(bins, acc)) +#
+		theme_classic() +#
+		ylab('Accuracy (%)') +#
+		labs(color='') +#
+		geom_line(colour='#4A90E2', size=1) +#
+		ylim(0,100) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}
+l1hs = parse_file('l1hs_trend.txt')
+l1hs
+l1a = parse_file('l1a_trend.txt')
+l1a
+plot_trend(l1a) + geom_vline(xintercept=c(20,80), linetype='dashed')
+plot_trend = function(data, colour='4A90E2') {#
+	ggplot(data, aes(bins, acc)) +#
+		theme_classic() +#
+		ylab('Accuracy (%)') +#
+		labs(color='') +#
+		geom_line(colour=colour, size=1) +#
+		ylim(0,100) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}
+plot_trend = function(data) {#
+	ggplot(data, aes(bins, acc)) +#
+		theme_classic() +#
+		ylab('Accuracy (%)') +#
+		labs(color='') +#
+		geom_line(colour='#4A90E2', size=1) +#
+		ylim(0,100) +#
+		scale_x_continuous(name='', breaks=c(0,20,80,100), labels=c('-2kb','start','end','+2kb'))#
+}
+iap = parse_file('iapez_trend.txt')
+mervl = parse_file('mervl_trend.txt')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red') +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red', alpha=0.8) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black', alpha=0.8)
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red', alpha=0.6) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black', alpha=0.6)
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red', alpha=0.7) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black', alpha=0.7)
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red', alpha=0.7) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black', alpha=0.7) +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+mervl = parse_file('mervl_trend.txt')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red', alpha=0.7) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black', alpha=0.7) +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+quartz(w=4,h=2.8)#
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red', alpha=0.7) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='black', alpha=0.7) +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='red') +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='grey') +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour='grey') +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='red') +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour=grey(0.3)) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='red') +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour=grey(0.5)) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='red') +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+plot_trend(l1a) +#
+	geom_line(data=iap, mapping=aes(bins,acc), size=1, colour=grey(0.6)) +#
+	geom_line(data=mervl, mapping=aes(bins,acc), size=1, colour='red') +#
+	geom_vline(xintercept=c(20,80), linetype='dashed')
+library(svglite)
+ggsave('~/Downloads/temp.svg')
