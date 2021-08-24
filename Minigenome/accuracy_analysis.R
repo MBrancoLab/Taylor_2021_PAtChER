@@ -75,18 +75,17 @@ pdata = rbind(norm.counts('10kb', include='unique') %>% add_column(Ds='0kb'),
 
 ##summarise
 
-sdata = pdata %>% group_by(dist,Ds) %>%
-	summarise(mrec=mean(ori), sdrec=sd(ori), macc=mean(acc, na.rm=T), sdacc=sd(acc, na.rm=T))
+#sdata = pdata %>% group_by(dist,Ds) %>%
+#	summarise(mrec=mean(ori), sdrec=sd(ori), macc=mean(acc, na.rm=T), sdacc=sd(acc, na.rm=T))
 
 
 ##plot recovery (20kb only)
 
 quartz(w=4,h=3)
-sdata %>% filter(Ds=='0kb' | Ds=='20kb') %>%
-ggplot(aes(factor(dist), mrec, fill=Ds)) +
+pdata %>% filter(Ds=='0kb' | Ds=='20kb') %>%
+ggplot(aes(factor(dist),ori,fill=Ds)) +
 	theme_classic() +
-	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +
-	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +
+	geom_boxplot(outlier.shape=NA) +
 	scale_fill_manual(values=c('grey','orange')) +
 	xlab('Inter-repeat distance (kb)') +
 	ylab('% Recovered reads') +
@@ -96,11 +95,10 @@ ggplot(aes(factor(dist), mrec, fill=Ds)) +
 ##plot accuracy (20kb only)
 
 quartz(w=4,h=3)
-sdata %>% filter(Ds=='0kb' | Ds=='20kb') %>%
-ggplot(aes(factor(dist), macc, fill=Ds)) +
+pdata %>% filter(Ds=='0kb' | Ds=='20kb') %>%
+ggplot(aes(factor(dist),acc,fill=Ds)) +
 	theme_classic() +
-	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +
-	geom_errorbar(aes(ymin=macc, ymax=macc+sdacc), width=0.2, position=position_dodge(0.8)) +
+	geom_boxplot(outlier.shape=NA) +
 	scale_fill_manual(values=c('grey','orange')) +
 	xlab('Inter-repeat distance (kb)') +
 	ylab('Accuracy (%)') +
@@ -110,11 +108,10 @@ ggplot(aes(factor(dist), macc, fill=Ds)) +
 ##plot recovery (all)
 
 quartz(w=5,h=3)
-sdata %>%
-ggplot(aes(factor(dist), mrec, fill=Ds)) +
+pdata %>%
+ggplot(aes(factor(dist), ori, fill=Ds)) +
 	theme_classic() +
-	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +
-	geom_errorbar(aes(ymin=mrec, ymax=mrec+sdrec), width=0.2, position=position_dodge(0.8)) +
+	geom_boxplot(outlier.shape=NA) +
 	scale_fill_manual(values=c('grey','yellow2','orange','red')) +
 	xlab('Inter-repeat distance (kb)') +
 	ylab('% Recovered reads') +
@@ -124,11 +121,10 @@ ggplot(aes(factor(dist), mrec, fill=Ds)) +
 ##plot accuracy (all)
 
 quartz(w=5,h=3)
-sdata %>%
-ggplot(aes(factor(dist), macc, fill=Ds)) +
+pdata %>%
+ggplot(aes(factor(dist), acc, fill=Ds)) +
 	theme_classic() +
-	geom_bar(stat='identity', position=position_dodge(), colour='black', width=0.8) +
-	geom_errorbar(aes(ymin=macc, ymax=macc+sdacc), width=0.2, position=position_dodge(0.8)) +
+	geom_boxplot(outlier.shape=NA) +
 	scale_fill_manual(values=c('grey','yellow2','orange','red')) +
 	xlab('Inter-repeat distance (kb)') +
 	ylab('Accuracy (%)') +

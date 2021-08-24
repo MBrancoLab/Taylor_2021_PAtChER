@@ -26,3 +26,7 @@ mervl-int	0kb	9299	9296
 mervl-int	10kb	30292	29417
 mervl-int	20kb	47505	45647
 mervl-int	40kb	64576	61015
+etnerv-int	0kb	3703	3703
+etnerv-int	10kb	7177	7144
+etnerv-int	20kb	9862	9805
+etnerv-int	40kb	12561	12446

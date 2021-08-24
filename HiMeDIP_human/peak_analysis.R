@@ -34,14 +34,14 @@ sum.data = data %>% mutate(met_group=cut(met, c(0,25,75,100), include.lowest=TRU
 
 plot.peaks = function(cell, reads, y.lim=c(0,70)) {
 	sum.data %>% filter(cells==cell, type==reads) %>%
-	ggplot(aes(met_group, perc, fill=region)) +
+	ggplot(aes(met_group, perc, fill=factor(region,levels=c('up','int')))) +
 		geom_bar(stat='identity', position=position_dodge(), colour='black') +
 		theme_classic() +
 		ylim(y.lim[1], y.lim[2]) +
 		xlab('% methylation') +
 		ylab('% with peaks') +
 		labs(fill='') +
-		scale_fill_discrete(labels=c('Internal',"5' end"))
+		scale_fill_discrete(labels=c("5' end",'Internal'))
 }
 
 quartz(w=3.5,h=4)

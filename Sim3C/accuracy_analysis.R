@@ -50,7 +50,7 @@ quartz(w=3.5,h=3)
 fam.plot(hs, sel.te=c('l1hs','l1pa2','sva_a','sva_f','hervk_int'))   #Figure 2B
 
 quartz(w=3.5,h=3)
-fam.plot(mm, sel.te=c('l1tf','l1a','l1gf','iapez-int','mervl-int'))  #Figure 2B
+fam.plot(mm, sel.te=c('l1tf','l1a','etnerv-int','iapez-int','mervl-int'))  #Figure 2B
 
 
 

@@ -3,6 +3,7 @@
 
 
 library(tidyverse)
+library(ggpubr)
 
 
 ##file parsing function
@@ -48,13 +49,13 @@ enr.plot = function(data, min.rpm=0.01) {
 		xlab('% methylation') +
 		ylab('log2 enrichment') +
 		labs(fill='') +
-		scale_fill_discrete(labels=c('Internal',"5' end"))
+		scale_fill_discrete(labels=c("5' end",'Internal'))
 }
 
 
 ##differential methylation plot function
 
-diff.plot = function(data, min.rpm=0.01, roi='L1', colour='#F8766D') {
+diff.plot = function(data, min.rpm=0.01, roi='int', colour='#00BFC4') {
 	data %>% filter(rpm.ep>min.rpm & rpm.mcf>min.rpm, type==roi) %>%
 	ggplot(aes(bs.diff, medip.diff)) +
 		theme_classic() +
@@ -63,55 +64,56 @@ diff.plot = function(data, min.rpm=0.01, roi='L1', colour='#F8766D') {
 		geom_point(size=0.5, colour=colour) +
 		xlab('ATLAS-BS difference') +
 		ylab('Hi-MeDIP difference') +
-		geom_smooth(method=lm, colour='black')
+		geom_smooth(method=lm, colour='black') +
+		stat_cor()
 }
 
 
 
-##parse all read counts (Figure 4B/C)
+##parse unique/non-unique counts depending on region (Figure 4B/C)
 
 ep.l1 = parse.files(gtf.file = '2102Ep_ATLAS_internal.gtf',
 	counts.file = 'counts/2102Ep_L1counts.txt',
-	read.type = 'all')
+	read.type = 'recov')
 ep.up = parse.files(gtf.file = '2102Ep_ATLAS_5prime.gtf',
 	counts.file = 'counts/2102Ep_UPcounts.txt',
-	read.type = 'all')
-ep = rbind(ep.l1, ep.up) %>% add_column(type = rep(c('L1','UP'), c(nrow(ep.l1), nrow(ep.up))))
+	read.type = 'unique')
+ep = rbind(ep.l1, ep.up) %>% add_column(type = rep(c('int','5p'), c(nrow(ep.l1), nrow(ep.up))))
 
 mcf.l1 = parse.files(gtf.file = 'MCF7_ATLAS_internal.gtf',
 	counts.file = 'counts/MCF7_L1counts.txt',
-	read.type = 'all')
+	read.type = 'recov')
 mcf.up = parse.files(gtf.file = 'MCF7_ATLAS_5prime.gtf',
 	counts.file = 'counts/MCF7_UPcounts.txt',
-	read.type = 'all')
-mcf = rbind(mcf.l1, mcf.up) %>% add_column(type = rep(c('L1','UP'), c(nrow(mcf.l1), nrow(mcf.up))))
+	read.type = 'unique')
+mcf = rbind(mcf.l1, mcf.up) %>% add_column(type = rep(c('int','5p'), c(nrow(mcf.l1), nrow(mcf.up))))
 
 
-##parse unique/non-unique counts depending on region (Supp Fig 4A/B)
+##parse all read counts (Supp Fig 4A/B)
 
 #ep.l1 = parse.files(gtf.file = '2102Ep_ATLAS_internal.gtf',
 #	counts.file = 'counts/2102Ep_L1counts.txt',
-#	read.type = 'recov')
+#	read.type = 'all')
 #ep.up = parse.files(gtf.file = '2102Ep_ATLAS_5prime.gtf',
 #	counts.file = 'counts/2102Ep_UPcounts.txt',
-#	read.type = 'unique')
-#ep = rbind(ep.l1, ep.up) %>% add_column(type = rep(c('L1','UP'), c(nrow(ep.l1), nrow(ep.up))))
+#	read.type = 'all')
+#ep = rbind(ep.l1, ep.up) %>% add_column(type = rep(c('int','5p'), c(nrow(ep.l1), nrow(ep.up))))
 
 #mcf.l1 = parse.files(gtf.file = 'MCF7_ATLAS_internal.gtf',
 #	counts.file = 'counts/MCF7_L1counts.txt',
-#	read.type = 'recov')
+#	read.type = 'all')
 #mcf.up = parse.files(gtf.file = 'MCF7_ATLAS_5prime.gtf',
 #	counts.file = 'counts/MCF7_UPcounts.txt',
-#	read.type = 'unique')
-#mcf = rbind(mcf.l1, mcf.up) %>% add_column(type = rep(c('L1','UP'), c(nrow(mcf.l1), nrow(mcf.up))))
+#	read.type = 'all')
+#mcf = rbind(mcf.l1, mcf.up) %>% add_column(type = rep(c('int','5p'), c(nrow(mcf.l1), nrow(mcf.up))))
 
 
 ##plot enrichment
 
-quartz(w=3.8,h=3)
+quartz(w=3.8,h=3.2)
 enr.plot(ep)  #Figure 4B / Supp Fig 4A
 
-quartz(w=3.8,h=3)
+quartz(w=3.8,h=3.2)
 enr.plot(mcf)  #Figure 4B / Supp Fig 4A
 
 
@@ -126,7 +128,7 @@ quartz(w=3,h=3)
 diff.plot(all)  #Figure 4C / Supp Fig 4B
 
 quartz(w=3,h=3)
-diff.plot(all, roi='UP', colour='#00BFC4')  #Figure 4C / Supp Fig 4B
+diff.plot(all, roi='5p',  colour='#F8766D')  #Figure 4C / Supp Fig 4B
 
 
 

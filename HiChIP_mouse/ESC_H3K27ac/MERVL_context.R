@@ -29,7 +29,7 @@ sum.dist = mervl %>% mutate(dcat = cut(dist, c(-1,0,1e4,1e5,max(dist)))) %>%
 	group_by(cluster, dcat) %>%
 	summarise(n=length(dcat))
 
-quartz(w=3.5,h=3.5)
+quartz(w=3.5,h=3.2)
 sum.dist %>% filter(cluster!='cluster_4') %>%
 ggplot(aes(cluster, n, fill=dcat)) +
 	theme_classic() +
@@ -41,9 +41,18 @@ ggplot(aes(cluster, n, fill=dcat)) +
 	geom_bar(stat='identity', position=position_fill(reverse=TRUE), col='black', width=0.7)  #Figure 5H
 
 
+##chi-squared test on distances
+
+n.mat = matrix(sum.dist %>% filter(cluster!='cluster_4') %>% pull(n), nrow=4)
+p = c(chisq.test(n.mat[,1:2])$p.value,
+	chisq.test(n.mat[,1:3])$p.value,
+	chisq.test(n.mat[,2:3])$p.value)
+p.adjust(p, method='BH')
+
+
 ##plot expression
 
-quartz(w=3,h=3.5)
+quartz(w=3,h=3.2)
 mervl %>% filter(dist<100000,cluster!='cluster_4') %>%
 ggplot(aes(cluster,rna.rpm)) + 
 	theme_classic() +
@@ -51,6 +60,17 @@ ggplot(aes(cluster,rna.rpm)) +
 	stat_summary(fun=median, geom='point') +
 	xlab('') +
 	ylab('log2 RPM')  #Figure 5I
+
+
+##wilcoxon test on expression
+
+c1.expr = mervl %>% filter(dist<100000,cluster=='cluster_1') %>% pull(rna.rpm)
+c2.expr = mervl %>% filter(dist<100000,cluster=='cluster_2') %>% pull(rna.rpm)
+c3.expr = mervl %>% filter(dist<100000,cluster=='cluster_3') %>% pull(rna.rpm)
+p = c(wilcox.test(c1.expr,c2.expr)$p.value,
+	wilcox.test(c1.expr,c3.expr)$p.value,
+	wilcox.test(c2.expr,c3.expr)$p.value)
+p.adjust(p, method='BH')
 
 
 ##overlap with A/B compartment annotation
@@ -69,7 +89,7 @@ sum.comp = comp %>% group_by(X5,X9) %>%
 	summarise(n=length(X9))
 colnames(sum.comp) = c('cluster','comp','n')
 
-quartz(w=3.5,h=3.5)
+quartz(w=3.5,h=3.2)
 sum.comp %>% filter(cluster!='cluster_4') %>%
 ggplot(aes(cluster, n, fill=comp)) +
 	theme_classic() +
@@ -79,3 +99,12 @@ ggplot(aes(cluster, n, fill=comp)) +
 	scale_fill_manual(values=c('grey','green','red'),
 		labels=c('unnanotated','A','B')) +
 	geom_bar(stat='identity', position=position_fill(), col='black', width=0.7)   #Figure 5J
+
+
+##chi-squared test on comparment data
+
+n.mat = matrix(sum.comp %>% filter(cluster!='cluster_4') %>% pull(n), nrow=3)
+p = c(chisq.test(n.mat[,1:2])$p.value,
+	chisq.test(n.mat[,1:3])$p.value,
+	chisq.test(n.mat[,2:3])$p.value)
+p.adjust(p, method='BH')

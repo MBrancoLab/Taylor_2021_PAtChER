@@ -25,7 +25,7 @@ data = data %>% mutate(correct=(nondup>0 & ori>0), incorrect=(nondup>0 & dup>0),
 
 roc.data = data %>% mutate(dfac = cut(dist, c(0,15000,50000))) %>%
 	group_by(cutoff, dfac, type) %>%
-	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/sum(correct)*100)
+	summarise(recov=sum(correct)/sum(nondup>0)*100, fdr=sum(incorrect)/length(incorrect)*100)
 
 quartz(w=5, h=4)
 roc.data %>% filter(type=='all') %>%
