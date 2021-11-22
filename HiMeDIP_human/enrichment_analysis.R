@@ -111,10 +111,10 @@ mcf = rbind(mcf.l1, mcf.up) %>% add_column(type = rep(c('int','5p'), c(nrow(mcf.
 ##plot enrichment
 
 quartz(w=3.8,h=3.2)
-enr.plot(ep)  #Figure 4B / Supp Fig 4A
+enr.plot(ep)  #Figure 4B / Supp Fig 5A
 
 quartz(w=3.8,h=3.2)
-enr.plot(mcf)  #Figure 4B / Supp Fig 4A
+enr.plot(mcf)  #Figure 4B / Supp Fig 5A
 
 
 ##plot differential methylation
@@ -125,10 +125,10 @@ all = inner_join(ep %>% select(l1.info,met.ep=met,rpm.ep=input.rpm,norm.ep=norm,
 	mutate(bs.diff=met.mcf-met.ep, medip.diff=norm.mcf-norm.ep)
 
 quartz(w=3,h=3)
-diff.plot(all)  #Figure 4C / Supp Fig 4B
+diff.plot(all)  #Figure 4C / Supp Fig 5B
 
 quartz(w=3,h=3)
-diff.plot(all, roi='5p',  colour='#F8766D')  #Figure 4C / Supp Fig 4B
+diff.plot(all, roi='5p',  colour='#F8766D')  #Figure 4C / Supp Fig 5B
 
 
 

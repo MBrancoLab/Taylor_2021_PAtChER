@@ -93,7 +93,7 @@ ggplot(aes(met.a.diff, rna.diff)) +
 	xlab('log2 meDIP FC') +
 	ylab('log2 RNA FC') +
 	geom_hline(yintercept=0, colour='blue', linetype='dashed') +
-	geom_vline(xintercept=0, colour='blue', linetype='dashed')  #Supp Fig 5A
+	geom_vline(xintercept=0, colour='blue', linetype='dashed')  #Supp Fig 6A
 
 
 

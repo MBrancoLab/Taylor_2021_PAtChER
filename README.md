@@ -54,7 +54,19 @@ Hi-C or HiChIP data were aligned using minigenome.sh, which then counts the read
 
 *H3K27ac HiChIP analysis*
 
-For enrichment and peak analyses, read counts that would have come from the artificially duplicate region are estimated, assuming no enrichment (see paper methods for more details). In the enrichment analysis this is done within enrichment_analysis.sh, which then generates the plots in Figures 3C,D. In the peak analysis this is done in peak_detection.sh, which then generates normalised bigWig tracks (used in Figure 3B) and performs peak detection using MACS2. Peaks overlapping the regions of interest within the minigenome are analysed in peak_analysis.R to generate the ROC curves in Supplementary Figure 3, and the plot in Figure 3E.
+For enrichment and peak analyses, read counts that would have come from the artificially duplicate region are estimated, assuming no enrichment (see paper methods for more details). In the enrichment analysis this is done within enrichment_analysis.sh, which then generates the plots in Figures 3C,D. In the peak analysis this is done in peak_detection.sh, which then generates normalised bigWig tracks (used in Figure 3B) and performs peak detection using MACS2. Peaks overlapping the regions of interest within the minigenome are analysed in peak_analysis.R to generate the ROC curves in Supplementary Figure 4, and the plot in Figure 3E.
+
+
+## Long-range
+
+*Chromatin loop detection*
+
+Chromatin loops were called from our MCF7 and 2102Ep Hi-C data using Juicer (chromatinLoops.sh, which includes calls to brancoLoopsMCF7.sh and brancoLoopsP2102EP.sh scripts). Juicer's dump function was used to count reads involved in each chromatin loop (included in the 'chromatin_loops' output files) and reads involved in proximal contacts within each region (or bin) involved in the loop (hic_dump.sh). Those counts were processed by read_counts.R to produce Supplementary Figure 3A/B.
+
+
+*Minigenome focused on loops*
+
+A minigenome was generated that duplicates 200 regions involved in chromatin loops in MCF7 cells (make_minigenome.R). Two versions were made: one with duplications placed at the other end of the loop, and the other with duplications lying 50kb away from the selected regions. Minigenome generation follows the same logical structure as above. MCF7 Hi-C data was mapped to the minigenome with minigenome_align.sh, and read counts at original and duplicated positions processed with accuracy_analysis.R to produce Supplementary Figure 3D.
 
 
 ## HiMeDIP human
@@ -65,15 +77,15 @@ LINE-1 DNA methylation data from targeted bisulphite sequencing were parsed into
 
 *Enrichment analysis*
 
-Read counts from above were further processed with enrichment_analysis.R, wherein counts are normalised and coupled to the bisulphite data. The same script then generates plots correlating enrichment with bisulphite data (Figure 4B and Supplementary Figure 4A), as well as plots correlating the difference in DNA methylation measured by the two techniques (Figure 4C and Supplementary Figure 4B).
+Read counts from above were further processed with enrichment_analysis.R, wherein counts are normalised and coupled to the bisulphite data. The same script then generates plots correlating enrichment with bisulphite data (Figure 4B and Supplementary Figure 5A), as well as plots correlating the difference in DNA methylation measured by the two techniques (Figure 4C and Supplementary Figure 5B).
 
 *Peak analysis*
 
-Normalised bigWig files were generated in peak_detection.sh (used in Figures 4E and 5C, and Supplementary Figure 5B), which then performs peak detection using MACS2, and intersects them with the LINE-1 regions, as well as with RepeatMasker. These peak intersections were then analysed in peak_analysis.R to generate the plots in Figures 4D and 5A.
+Normalised bigWig files were generated in peak_detection.sh (used in Figures 4E and 5C, and Supplementary Figure 6B), which then performs peak detection using MACS2, and intersects them with the LINE-1 regions, as well as with RepeatMasker. These peak intersections were then analysed in peak_analysis.R to generate the plots in Figures 4D and 5A.
 
 *SVA analysis*
 
-The SVA heatmaps in Figure 5B were generated with sva_heatmaps.sh. To correlate SVA methylation with gene expression, gene TSSs were extracted with get_TSS.R, and the closest SVA element determined with bedtools (generating TSS_closest_SVA.bed). HiMeDIP read counts at SVAs, and RNA-seq reads counts at genes were generated with htseq-count. SVA_analysis.R then compiles these data to generate the scatter plot in Supplementary Figure 5A.
+The SVA heatmaps in Figure 5B were generated with sva_heatmaps.sh. To correlate SVA methylation with gene expression, gene TSSs were extracted with get_TSS.R, and the closest SVA element determined with bedtools (generating TSS_closest_SVA.bed). HiMeDIP read counts at SVAs, and RNA-seq reads counts at genes were generated with htseq-count. SVA_analysis.R then compiles these data to generate the scatter plot in Supplementary Figure 6A.
 
 
 ## HiChIP mouse
@@ -84,7 +96,7 @@ All data were aligned with PAtChER using patcher_align.sh and furher processed w
 
 *ESC meDIP*
 
-Normalised bigWig files were generated in peak_detection.sh, which then performs peak detection using MACS2, and intersects them with RepeatMasker. These peak intersections were then analysed in peak_analysis.R to generate the plot in Supplementary Figure 5C. The RLTR10-int heatmaps in Supplementary Figure 5D were generated with rltr10_heatmaps.sh.
+Normalised bigWig files were generated in peak_detection.sh, which then performs peak detection using MACS2, and intersects them with RepeatMasker. These peak intersections were then analysed in peak_analysis.R to generate the plot in Supplementary Figure 6C. The RLTR10-int heatmaps in Supplementary Figure 6D were generated with rltr10_heatmaps.sh.
 
 *AML12 H3K9me3*
 

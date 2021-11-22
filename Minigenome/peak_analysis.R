@@ -34,7 +34,7 @@ roc.data %>% filter(type=='all') %>%
 	xlab('False positive rate') +
 	ylab('True positive rate') +
 	geom_point() +
-	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))  #Supp Fig 3
+	scale_colour_manual(values=c('orange','red'), name='Gap', labels=c('≤15kb','>15kb'))  #Supp Fig 4
 
 quartz(w=5, h=4)
 roc.data %>% filter(type=='uni') %>%
@@ -43,7 +43,7 @@ roc.data %>% filter(type=='uni') %>%
 	xlab('False positive rate') +
 	ylab('True positive rate') +
 	geom_point() +
-	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))  #Supp Fig 3
+	scale_colour_manual(values=c('grey','black'),name='Gap', labels=c('≤15kb','>15kb'))  #Supp Fig 4
 
 
 ##calculate AUC

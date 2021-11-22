@@ -34,4 +34,4 @@ ggplot(fam.peaks, aes(log10(uni+1), log2(all+1)-log2(uni+1))) +
 	theme_classic() +
 	geom_hline(yintercept=0,linetype='dashed') +
 	xlab('log10 unique peaks') +
-	ylab('log2 fold change')  #Supp Fig 5C
+	ylab('log2 fold change')  #Supp Fig 6C

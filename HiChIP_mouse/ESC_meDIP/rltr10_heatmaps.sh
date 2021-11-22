@@ -19,7 +19,7 @@ computeMatrix scale-regions -S E14_meDIP-all_norm.bw E14_meDIP-uni_norm.bw \
 	-bs 100 \
 	-o $te.mat
 
-##Supp Fig 5D
+##Supp Fig 6D
 plotHeatmap --matrixFile $te.mat \
 	--outFileName $te.svg \
 	--outFileSortedRegions ${te}_order.txt \
