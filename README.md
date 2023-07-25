@@ -1,6 +1,6 @@
 # Taylor_2021_PAtChER
 
-Scripts and files from Taylor et al 2021 bioRxiv preprint
+Scripts and files from Taylor et al (2021) "Locus-specific chromatin profiling of evolutionarily young transposable elements" PMID: 34908129
 
 
 ## Contact frequency
